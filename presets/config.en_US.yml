@@ -1,0 +1,20 @@
+# IPTMUTECHAT official English preset.
+# Rename this file to config.yml and place it in plugins/IPTMUTECHAT/ while the server is stopped.
+# Missing message keys are filled from official defaults; English messages load from languages/en_US.yml.
+
+config-version: 10
+language: en_US
+
+updater:
+  enabled: true
+  auto-download: true
+  connect-timeout-seconds: 10
+  read-timeout-seconds: 30
+
+style:
+  ip-info-gradient-start: "#22D3EE"
+  ip-info-gradient-end: "#3B82F6"
+
+chat:
+  cooldown-seconds: 1
+  prefix: "&#8A2387&l[&#E62028&lIPTMUTECHAT&#8A2387&l] &8&l» &7"

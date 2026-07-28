@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use IPTMUTECHAT, cite this repository and its release version."
+title: IPTMUTECHAT
+type: software
+authors:
+  - name: Lazyz
+version: 1.2.0
+date-released: 2026-07-29
+url: "https://github.com/Lazyzouo/IPTMUTECHAT"
+repository-code: "https://github.com/Lazyzouo/IPTMUTECHAT"
+license: MIT

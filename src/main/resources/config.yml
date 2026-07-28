@@ -1,0 +1,156 @@
+# ============================================================================ #
+#                                                                              #
+#                              ${pluginName} v${version}
+#                                                                              #
+#    作者: ${authors}
+#    描述: Folia兼容的玩家IP查询与聊天优化综合插件                             #
+#    提示: 修改本文件后，可在游戏内使用 /chatreload 指令热重载所有配置。       #
+#                                                                              #
+# ============================================================================ #
+
+# 配置版本（请勿手动修改；用于安全迁移默认菜单样式）
+config-version: 10
+
+# 界面语言：zh_CN（简体中文）或 en_US（English）
+language: zh_CN
+
+# GitHub 自动更新设置（更新会下载至服务器 update 目录，并在下次重启时安装）
+updater:
+  enabled: true
+  auto-download: true
+  connect-timeout-seconds: 10
+  read-timeout-seconds: 30
+
+# 通知外观设置
+style:
+  # /ipinfo 独立渐变颜色（冰青 → 亮蓝）
+  ip-info-gradient-start: "#22D3EE"
+  ip-info-gradient-end: "#3B82F6"
+
+# 聊天系统基础设置
+chat:
+  # 发言冷却时间（秒），用于防止玩家刷屏
+  cooldown-seconds: 1
+  # 插件所有消息的统一前缀（支持 & 颜色代码和十六进制 &#RRGGBB）
+  prefix: "&#8A2387&l[&#E62028&l${pluginName}&#8A2387&l] &8&l» &7"
+
+# 消息提示配置（支持 & 颜色代码和十六进制 &#RRGGBB）
+# 提示: {变量名} 会在游戏中被自动替换为对应的值
+messages:
+  # ---- 基础系统提示 ----
+  reload-success: "&a&l操作成功 &#34495E&l► &#95A5A6&l配置文件与数据已成功重载！"
+  no-permission: "&c&l权限不足 &#34495E&l► &#95A5A6&l你没有权限执行此命令！"
+  player-not-found: "&c&l操作失败 &#34495E&l► &#95A5A6&l未找到该玩家 (仅支持在线玩家)！"
+  unknown-command: "未知命令"
+  player-only: "只有玩家才能使用此命令"
+  unknown-player: "未知玩家"
+
+  # ---- 聊天与冷却提示 ----
+  cooldown: "&c&l系统拦截 &#34495E&l► &#95A5A6&l发言过快！请等待 &f&l{time} &#95A5A6&l秒后再发送消息。"
+
+  # ---- 禁言系统提示 ----
+  muted: "&c&l禁言拦截 &#34495E&l► &#95A5A6&l你已被禁言，原因：&f&l{reason}"
+  muted-no-reason: "&c&l禁言拦截 &#34495E&l► &#95A5A6&l你已被禁言，无法发送消息。"
+  default-reason: "未指定"
+  mute-usage: "用法: /mute <玩家> [时长] [原因]"
+  mute-duration-notice: "禁言时长: {time}"
+  mute-type-permanent-notice: "禁言类型: 永久禁言"
+  mute-ends-in-notice: "禁言结束时间: {time}"
+  mute-target: "&a&l操作成功 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l已被永久禁言。"
+  mute-target-with-time: "&a&l操作成功 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l已被临时禁言，时长：&f&l{time}"
+  mute-target-with-reason: "&a&l操作成功 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l已被禁言，原因：&f&l{reason}"
+  unmute-target: "&a&l操作成功 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l已解除禁言状态。"
+  not-muted: "&e&l系统提示 &#34495E&l► &#95A5A6&l该玩家当前未被禁言。"
+  already-muted: "&e&l系统提示 &#34495E&l► &#95A5A6&l该玩家已被禁言，无需重复操作。"
+  unmute-usage: "用法: /unmute <玩家>"
+  unmuted-player: "你已被解除禁言"
+  muteinfo-usage: "用法: /muteinfo <玩家>"
+
+  # ---- 禁言信息展示 ----
+  mute-info-header: "&#34495E&l------------------ &r&#F2C94C&l✧ &r&#34495E&l------------------"
+  mute-info-title: "&#8A2387&l✦ &#B05C9E&l禁言档案 &#F2C94C&l✦"
+  mute-info-player: "&8▸ &7玩家名称: &f&l{player}"
+  mute-info-reason: "&8▸ &7处罚原因: &f&l{reason}"
+  mute-info-time-left: "&8▸ &7剩余时间: &f&l{time}"
+  mute-info-permanent: "&8▸ &7禁言类型: &#FF5E62&l永久禁言"
+  mute-info-temporary: "&8▸ &7禁言类型: &#F2C94C&l临时禁言"
+  mute-info-footer: "&#34495E&l------------------ &r&#F2C94C&l✧ &r&#34495E&l------------------"
+
+  # ---- 屏蔽系统提示 ----
+  ignore-added: "&a&l操作成功 &#34495E&l► &#95A5A6&l已成功屏蔽玩家 &f&l{player} &#95A5A6&l的消息。"
+  ignore-removed: "&a&l操作成功 &#34495E&l► &#95A5A6&l已取消屏蔽玩家 &f&l{player}&#95A5A6&l。"
+  ignore-already: "&e&l系统提示 &#34495E&l► &#95A5A6&l你已经屏蔽了该玩家。"
+  ignore-not: "&e&l系统提示 &#34495E&l► &#95A5A6&l你当前并没有屏蔽该玩家。"
+  ignore-self: "&c&l操作失败 &#34495E&l► &#95A5A6&l无法将自己加入屏蔽列表！"
+  ignore-exempt: "&c&l操作失败 &#34495E&l► &#95A5A6&l该玩家属于管理员豁免名单，无法被屏蔽！"
+  ignore-usage: "用法: /ignore <玩家>"
+
+  # ---- 屏蔽列表展示 ----
+  ignore-list-header: "&#34495E&l------------------ &r&#F2C94C&l✧ &r&#34495E&l------------------"
+  ignore-list-title: "&#8A2387&l✦ &#B05C9E&l你的屏蔽列表 &#F2C94C&l✦"
+  ignore-list-empty: "&8▸ &7空空如也，你当前没有屏蔽任何玩家。"
+  ignore-list-format: "&8▸ &f&l{player}"
+  ignore-list-footer: "&#34495E&l------------------ &r&#F2C94C&l✧ &r&#34495E&l------------------"
+
+  # ---- IP 查询展示 ----
+  ip-info-usage: "&c&l用法错误 ► &f&l/ipinfo <玩家>"
+  ip-info-not-found: "&c&l查询失败 ► &f&l未找到玩家 {player} 的 IP 记录"
+  ip-info-hidden: "&e&l查询受限 ► &f&l玩家 {player} 已隐藏 IP 信息"
+  ip-hide-player-only: "&c&l操作失败 ► &f&l此命令只能由玩家执行"
+  ip-hide-enabled: "&a&l隐藏成功 ► &f&l你的 IP 信息和同 IP 账号现已隐藏"
+  ip-hide-disabled: "&e&l取消隐藏 ► &f&l你的 IP 信息和同 IP 账号现已恢复显示"
+  ip-info-header: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
+  ip-info-title: "&#8A2387&l✦ &#B05C9E&lIP 查询档案 &#F2C94C&l✦"
+  ip-info-player: "&8&l▸ &7&l玩家名称: &f&l{player}"
+  ip-info-address: "&8&l▸ &7&l当前 IP: &f&l{ip}"
+  ip-info-same-title: "&#B05C9E&l◆ &f&l同 IP 账号 &7&l({count})"
+  ip-info-same-entry: "&8&l  ▸ &f&l{player}"
+  ip-info-same-empty: "&8&l  ▸ &7&l未发现其他同 IP 账号"
+  ip-info-footer: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
+
+  # ---- 私聊与管理操作 ----
+  forcesay-usage: "用法: /forcesay <玩家> <消息>"
+  forcesay-success: "已让 {player} 发送消息: {message}"
+  reply-usage: "用法: /reply <消息>"
+  reply-none: "你没有发送过私聊消息"
+  reply-offline: "上一次私聊的玩家已离线"
+  reply-muted: "你已被禁言，无法发送私聊"
+  private-message-sent: "你悄悄地对 {player} 说: {message}"
+  private-message-received: "{player} 悄悄地对你说: {message}"
+
+  # ---- 时间格式 ----
+  duration-permanent: "永久"
+  duration-expired: "已过期"
+  duration-days: "{days}天{hours}时"
+  duration-hours: "{hours}时{minutes}分"
+  duration-minutes: "{minutes}分{seconds}秒"
+  duration-seconds: "{seconds}秒"
+
+  # ---- GitHub 自动更新器（服务器后台） ----
+  updater-disabled: "自动更新检查已关闭。"
+  updater-checking: "正在检查 GitHub 最新版本..."
+  updater-latest: "当前版本 v{version} 已是最新版本。"
+  updater-available: "发现新版本：当前 v{current}，最新 v{latest}。"
+  updater-downloaded: "已安全下载 v{version} 至 {file}。"
+  updater-restart: "更新将在下次服务器重启时安装。"
+  updater-manual: "自动下载已关闭，请前往 {url} 手动下载。"
+  updater-failed: "自动更新失败：{reason}。请前往 {url} 手动下载。"
+
+  # ---- 帮助菜单 ----
+  help-header: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
+  help-title: "&#8A2387&l✦ &#B05C9E&l{name} &7v{version} &8▸ &7作者: &f&l{author} &#8A2387&l✦"
+  help-divider: "&#34495E&l------&#5F526D&l------&#8A5C83&l------&#F2C94C&l---&#8A5C83&l------&#5F526D&l------&#34495E&l------"
+  help-command: "&8▸ &#F2C94C&l/chathelp &7- 查看此帮助菜单"
+  help-player-section: "&#B05C9E&l◆ &f&l玩家指令"
+  help-ignore: "&8▸ &#F2C94C&l/ignore <玩家> &7- 屏蔽或取消屏蔽一名玩家"
+  help-ignore-list: "&8▸ &#F2C94C&l/ignorelist &7- 查看你的屏蔽列表"
+  help-reply: "&8▸ &#F2C94C&l/r <消息> &7- 回复最后一位私聊对象"
+  help-admin-section: "&#FF5E62&l◆ &f&l管理指令"
+  help-ipinfo: "&8▸ &#FF5E62&l/ipinfo <玩家> &7- 查询玩家 IP 信息"
+  help-iphide: "&8▸ &#FF5E62&l/iphide &7- 隐藏或恢复自己的 IP 信息和同 IP 账号"
+  help-mute: "&8▸ &#FF5E62&l/mute <玩家> [时长] [原因] &7- 禁言玩家"
+  help-unmute: "&8▸ &#FF5E62&l/unmute <玩家> &7- 解除玩家禁言"
+  help-muteinfo: "&8▸ &#FF5E62&l/muteinfo <玩家> &7- 查看禁言档案"
+  help-forcesay: "&8▸ &#FF5E62&l/forcesay <玩家> <消息> &7- 强制玩家发言"
+  help-reload: "&8▸ &#FF5E62&l/chatreload &7- 重载插件配置"
+  help-footer: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"

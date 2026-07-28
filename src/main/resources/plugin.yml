@@ -1,0 +1,66 @@
+name: ${pluginName}
+version: '${version}'
+main: com.icu.iptmutechat.IPTMUTECHAT
+api-version: 1.13
+folia-supported: true
+authors: [${authors}]
+website: https://github.com/Lazyzouo/IPTMUTECHAT
+description: Player IP and chat administration for Paper/Folia / Paper/Folia 玩家IP与聊天管理插件
+commands:
+  ipinfo:
+    description: Query player IP information / 查询玩家IP信息
+    permission: iptmutechat.ipinfo
+  iphide:
+    description: Hide your IP information and same-IP accounts / 隐藏自己的IP信息和同IP账号
+    permission: iptmutechat.iphide
+  mute:
+    description: Mute a player / 禁言玩家
+    permission: iptmutechat.mute
+  unmute:
+    description: Unmute a player / 解除禁言
+    permission: iptmutechat.unmute
+  muteinfo:
+    description: View player mute information / 查看玩家禁言信息
+    permission: iptmutechat.muteinfo
+  ignore:
+    description: Ignore or unignore a player / 屏蔽或取消屏蔽玩家
+    permission: iptmutechat.ignore
+  ignorelist:
+    description: View ignored players / 查看已屏蔽列表
+  forcesay:
+    description: Force a player to chat / 强制玩家发言
+    permission: iptmutechat.forcesay
+  reply:
+    description: Reply to the latest private message / 回复最后一条私聊
+    aliases: [r]
+  chatreload:
+    description: Reload plugin configuration / 重载插件配置
+    permission: iptmutechat.admin
+  chathelp:
+    description: View plugin help / 查看插件帮助
+  iptmutechat:
+    description: View help or reload configuration / 查看帮助或重载配置
+    usage: /iptmutechat [help|reload]
+permissions:
+  iptmutechat.ipinfo:
+    default: op
+  iptmutechat.iphide:
+    default: op
+  iptmutechat.mute:
+    default: op
+  iptmutechat.unmute:
+    default: op
+  iptmutechat.muteinfo:
+    default: op
+  iptmutechat.ignore:
+    default: true
+  iptmutechat.ignore.exempt:
+    default: op
+  iptmutechat.forcesay:
+    default: op
+  iptmutechat.bypass.muted:
+    default: op
+  iptmutechat.bypass.cooldown:
+    default: op
+  iptmutechat.admin:
+    default: op

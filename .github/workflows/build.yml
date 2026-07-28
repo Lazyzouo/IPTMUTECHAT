@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build --no-daemon --console=plain
+
+      - name: Verify versioned artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n "s/^version = '\([^']*\)'/\1/p" build.gradle)"
+          jar="build/libs/IPTMUTECHAT-${version}.jar"
+          test -f "$jar"
+          unzip -p "$jar" plugin.yml | grep -F "version: '${version}'"
+          unzip -p "$jar" plugin.yml | grep -F "authors: [Lazyz]"
+          unzip -l "$jar" | grep -F "languages/en_US.yml"
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: IPTMUTECHAT-build
+          path: build/libs/IPTMUTECHAT-*.jar
+          if-no-files-found: error
+          retention-days: 14

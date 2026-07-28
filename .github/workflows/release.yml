@@ -1,0 +1,127 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "build.gradle"
+      - "settings.gradle"
+      - "gradle/**"
+      - "gradlew"
+      - "gradlew.bat"
+      - "src/**"
+      - "presets/**"
+      - "CHANGELOG.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'Lazyzouo/IPTMUTECHAT'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n "s/^version = '\([^']*\)'/\1/p" build.gradle)"
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether Release exists
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build Release
+        if: steps.existing.outputs.exists == 'false'
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build --no-daemon --console=plain
+
+      - name: Prepare and verify Release assets
+        if: steps.existing.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/release
+          jar="build/libs/IPTMUTECHAT-${VERSION}.jar"
+          test -f "$jar"
+          unzip -p "$jar" plugin.yml | grep -F "version: '${VERSION}'"
+          unzip -p "$jar" plugin.yml | grep -F "authors: [Lazyz]"
+          sha256sum "$jar" > "${jar}.sha256"
+          cp presets/config.en_US.yml "build/release/config.en_US.yml"
+          cp src/main/resources/languages/en_US.yml "build/release/messages.en_US.yml"
+          cat > build/release/RELEASE_NOTES.md <<EOF
+          ## Official Release
+
+          This Release was built automatically from the tagged source. The JAR version, embedded plugin metadata, and SHA-256 asset were verified before publishing.
+
+          **Compatibility:** Paper/Folia 1.20.1-1.21.11 · **Tested:** 1.21.11 · **Java bytecode:** 17 · **Author:** Lazyz
+
+          English users can download \`config.en_US.yml\` or set \`language: en_US\` in the regular configuration.
+
+          ## 官方发布
+
+          本 Release 由对应标签源码自动构建；发布前已核对 JAR 版本、插件元数据与 SHA-256 校验资产。
+
+          **兼容：** Paper/Folia 1.20.1-1.21.11 · **测试版本：** 1.21.11 · **Java 字节码：** 17 · **作者：** Lazyz
+
+          英文用户可下载 \`config.en_US.yml\`，或在常规配置中设置 \`language: en_US\`。
+          EOF
+
+      - name: Create tag and GitHub Release
+        if: steps.existing.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "IPTMUTECHAT $TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            "build/libs/IPTMUTECHAT-${VERSION}.jar" \
+            "build/libs/IPTMUTECHAT-${VERSION}.jar.sha256" \
+            "build/release/config.en_US.yml" \
+            "build/release/messages.en_US.yml" \
+            --title "IPTMUTECHAT $TAG" \
+            --notes-file build/release/RELEASE_NOTES.md \
+            --generate-notes \
+            --verify-tag
