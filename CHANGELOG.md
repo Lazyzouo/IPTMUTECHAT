@@ -2,6 +2,28 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.3.1] - 2026-07-29
+
+### Changed
+
+- Standardized every player-facing plugin notification, Help line, and panel entry to render in bold through the shared in-game message renderer.
+- Centered all content inside the mute-record, ignore-list, and IP-information panels on the `✧` marker in their separator lines; the Help menu intentionally retains its existing layout.
+- Added pixel-aware width calculation for ASCII, CJK, Unicode, bold glyphs, and dynamic values so localized and personalized panel content remains centered.
+- Applied centering at runtime without rewriting server-owned configuration or changing any official parameter values.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 通过统一的游戏内消息渲染层，确保所有玩家可见的插件通知、Help 文本与面板条目均以粗体显示。
+- 禁言档案、屏蔽列表与 IP 查询面板内的全部内容现会基于分割线的 `✧` 星标居中；Help 菜单按要求保留原有布局。
+- 新增针对 ASCII、中日韩字符、Unicode、粗体字符与动态变量的像素宽度计算，确保中英文及个性化面板内容保持居中。
+- 居中处理在运行时完成，不会重写服主个人配置，也不会更改任何官方参数值。
+
 ## [1.3.0] - 2026-07-29
 
 ### Added
@@ -121,6 +143,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - 新增 `/iphide` OP 隐私开关并持久化隐藏状态。
 - 作者信息统一为 `Lazyz`，玩家可见硬编码文本全部改为语言资源。
 
+[1.3.1]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.3.0
 [1.2.3]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.3
 [1.2.2]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.2

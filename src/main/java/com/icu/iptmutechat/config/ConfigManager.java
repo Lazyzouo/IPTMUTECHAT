@@ -155,6 +155,12 @@ public class ConfigManager {
         return formatNotification(replacePlaceholders(getMessageTemplate(path), replacements));
     }
 
+    public String getCenteredMessage(String separatorPath, String path, String... replacements) {
+        return centerPanelMessage(
+                formatNotification(replacePlaceholders(getMessageTemplate(path), replacements)),
+                separatorPath);
+    }
+
     public String getIpInfoMessage(String path, String... replacements) {
         return formatIpInfoNotification(
                 replacePlaceholders(getMessageTemplate(path), replacements));
@@ -163,6 +169,19 @@ public class ConfigManager {
     public String getIpInfoAccentMessage(String path, String placeholder, String value, String accentColor) {
         return formatIpInfoAccent(
                 getMessageTemplate(path), placeholder, value, accentColor);
+    }
+
+    public String getCenteredIpInfoMessage(String separatorPath, String path, String... replacements) {
+        return centerPanelMessage(
+                formatIpInfoNotification(replacePlaceholders(getMessageTemplate(path), replacements)),
+                separatorPath);
+    }
+
+    public String getCenteredIpInfoAccentMessage(
+            String separatorPath, String path, String placeholder, String value, String accentColor) {
+        return centerPanelMessage(
+                formatIpInfoAccent(getMessageTemplate(path), placeholder, value, accentColor),
+                separatorPath);
     }
 
     public String getPrefixedIpInfoAccentMessage(String path, String placeholder, String value, String accentColor) {
@@ -197,6 +216,11 @@ public class ConfigManager {
         String key = "messages." + path;
         String localized = messageConfig != null ? messageConfig.getString(key) : null;
         return localized != null ? localized : config.getString(key, "");
+    }
+
+    private String centerPanelMessage(String formattedMessage, String separatorPath) {
+        return PanelTextFormatter.centerOnMarker(
+                formattedMessage, getMessageTemplate(separatorPath));
     }
 
     public String getRawMessage(String path, String... replacements) {

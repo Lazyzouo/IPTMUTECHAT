@@ -21,7 +21,7 @@ IPTMUTECHAT is a bilingual player investigation and chat moderation plugin for P
 
 Sensitive IP data stays on the server and is never sent to GitHub. Access to IP lookup, forced chat, mute management, and OP privacy controls is governed by explicit permissions.
 
-> Current release: **1.3.0** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
+> Current release: **1.3.1** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
 
 ## Features
 
@@ -32,6 +32,7 @@ Sensitive IP data stays on the server and is never sent to GitHub. Access to IP 
 - Permanent and timed mutes with reasons and status inspection.
 - Private-message reply tracking and configurable chat cooldowns.
 - Simplified Chinese (`zh_CN`) and English (`en_US`) runtime modes.
+- Bold player-facing plugin text and pixel-centered mute, ignore-list, and IP panels; the Help menu keeps its established layout.
 - Startup update checks with direct download, SHA-256 verification, JAR identity validation, and a manual fallback link.
 - Folia-aware plugin metadata and persistent YAML storage.
 - Automated GitHub builds and versioned Releases with English-default and Chinese-default JARs, official release notes, and GitHub SHA-256 digests.
@@ -103,7 +104,7 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 
 敏感 IP 数据只保存在服务器本地，不会发送至 GitHub。IP 查询、强制发言、禁言管理与 OP 隐私控制均受独立权限节点限制。
 
-> 当前版本：**1.3.0** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
+> 当前版本：**1.3.1** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
 
 ## 功能
 
@@ -114,6 +115,7 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 - 支持永久/定时禁言、原因记录及禁言状态查询。
 - 支持私聊快速回复与可配置聊天冷却。
 - 支持简体中文 `zh_CN` 与英文 `en_US` 运行模式。
+- 游戏内插件文本统一以粗体显示；禁言档案、屏蔽列表与 IP 查询面板按分割线星标进行像素居中，Help 菜单保持原有布局。
 - 启动时检查更新，可直接下载并校验 SHA-256 与 JAR 身份；失败时提供手动下载地址。
 - 提供自动构建、自动 Release、中英文默认 JAR、官方更新日志及 GitHub SHA-256 摘要。
 
