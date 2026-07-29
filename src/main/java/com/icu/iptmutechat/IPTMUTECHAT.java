@@ -4,6 +4,7 @@ import com.icu.iptmutechat.command.ChatCommandHandler;
 import com.icu.iptmutechat.command.IpInfoCommand;
 import com.icu.iptmutechat.command.IpHideCommand;
 import com.icu.iptmutechat.config.ConfigManager;
+import com.icu.iptmutechat.console.PluginConsoleLogger;
 import com.icu.iptmutechat.chat.cooldown.CooldownManager;
 import com.icu.iptmutechat.listener.ChatListener;
 import com.icu.iptmutechat.listener.ConnectionListener;
@@ -18,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class IPTMUTECHAT extends JavaPlugin {
 
     private static IPTMUTECHAT instance;
+    private PluginConsoleLogger consoleLogger;
     private ConfigManager configManager;
     private CooldownManager cooldownManager;
     private MuteManager muteManager;
@@ -32,6 +34,7 @@ public class IPTMUTECHAT extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        this.consoleLogger = new PluginConsoleLogger(this);
 
         this.configManager = new ConfigManager(this);
         this.muteManager = new MuteManager(this);
@@ -80,20 +83,14 @@ public class IPTMUTECHAT extends JavaPlugin {
     public ReplyManager getReplyManager() { return replyManager; }
     public IpRecordManager getIpRecordManager() { return ipRecordManager; }
     public SimilarIpManager getSimilarIpManager() { return similarIpManager; }
+    public PluginConsoleLogger getConsoleLogger() { return consoleLogger; }
 
     private void printStartupBanner() {
-        String version = getDescription().getVersion();
-        getLogger().info("============================================================");
-        getLogger().info("                    IPTMUTECHAT v" + version);
-        getLogger().info("        IP & Chat Administration / IP 与聊天管理");
-        getLogger().info("------------------------------------------------------------");
-        getLogger().info("  Status     : ENABLED / 已启用");
-        getLogger().info("  Author     : Lazyz");
-        getLogger().info("  Language   : " + configManager.getLanguage());
-        getLogger().info("  Supported  : Paper/Folia 1.20.1 - 1.21.11");
-        getLogger().info("  Tested     : Paper/Folia 1.21.11");
-        getLogger().info("  Repository : " + GitHubUpdateManager.REPOSITORY_URL);
-        getLogger().info("============================================================");
+        consoleLogger.printStartupBanner(
+                getDescription().getVersion(),
+                configManager.getLanguage(),
+                getServer().getName(),
+                GitHubUpdateManager.REPOSITORY_URL);
     }
 
     /** Recreates deleted data files from the data currently held in memory. */

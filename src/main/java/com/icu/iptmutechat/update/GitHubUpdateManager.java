@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.icu.iptmutechat.IPTMUTECHAT;
 import com.icu.iptmutechat.config.ConfigManager;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 
 public class GitHubUpdateManager {
 
@@ -52,11 +52,13 @@ public class GitHubUpdateManager {
 
     public void checkForUpdates() {
         if (!configManager.isUpdaterEnabled()) {
-            plugin.getLogger().info(configManager.getRawMessage("updater-disabled"));
+            plugin.getConsoleLogger().info(
+                    configManager.getRawMessage("updater-disabled"), NamedTextColor.YELLOW);
             return;
         }
 
-        plugin.getLogger().info(configManager.getRawMessage("updater-checking"));
+        plugin.getConsoleLogger().info(
+                configManager.getRawMessage("updater-checking"), NamedTextColor.AQUA);
         HttpRequest request = request(LATEST_RELEASE_API);
         httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
                 .orTimeout(configManager.getUpdateReadTimeoutSeconds(), TimeUnit.SECONDS)
@@ -87,24 +89,27 @@ public class GitHubUpdateManager {
         SemanticVersion current = SemanticVersion.parse(plugin.getDescription().getVersion());
         SemanticVersion latest = SemanticVersion.parse(release.tag());
         if (latest.compareTo(current) <= 0) {
-            plugin.getLogger().info(configManager.getRawMessage(
-                    "updater-latest", "version", current.toString()));
+            plugin.getConsoleLogger().info(configManager.getRawMessage(
+                    "updater-latest", "version", current.toString()), NamedTextColor.GREEN);
             return;
         }
 
-        plugin.getLogger().info(configManager.getRawMessage(
-                "updater-available", "current", current.toString(), "latest", latest.toString()));
+        plugin.getConsoleLogger().info(configManager.getRawMessage(
+                "updater-available", "current", current.toString(), "latest", latest.toString()),
+                NamedTextColor.GOLD);
         if (!configManager.isAutoDownloadEnabled()) {
-            plugin.getLogger().info(configManager.getRawMessage(
-                    "updater-manual", "url", release.pageUrl()));
+            plugin.getConsoleLogger().info(configManager.getRawMessage(
+                    "updater-manual", "url", release.pageUrl()), NamedTextColor.YELLOW);
             return;
         }
 
         try {
             Path downloadedFile = downloadVerifiedUpdate(release, latest);
-            plugin.getLogger().info(configManager.getRawMessage(
-                    "updater-downloaded", "version", latest.toString(), "file", downloadedFile.toString()));
-            plugin.getLogger().info(configManager.getRawMessage("updater-restart"));
+            plugin.getConsoleLogger().info(configManager.getRawMessage(
+                    "updater-downloaded", "version", latest.toString(), "file", downloadedFile.toString()),
+                    NamedTextColor.GREEN);
+            plugin.getConsoleLogger().info(
+                    configManager.getRawMessage("updater-restart"), NamedTextColor.LIGHT_PURPLE);
         } catch (Exception e) {
             logFailure(e);
         }
@@ -234,8 +239,9 @@ public class GitHubUpdateManager {
 
     private void logFailure(Throwable error) {
         String reason = error.getMessage() != null ? error.getMessage() : error.getClass().getSimpleName();
-        plugin.getLogger().log(Level.WARNING, configManager.getRawMessage(
-                "updater-failed", "reason", reason, "url", REPOSITORY_URL + "/releases/latest"));
+        plugin.getConsoleLogger().warning(configManager.getRawMessage(
+                "updater-failed", "reason", reason, "url", REPOSITORY_URL + "/releases/latest"),
+                NamedTextColor.RED);
     }
 
     private record Asset(String name, String url, String digest) {}

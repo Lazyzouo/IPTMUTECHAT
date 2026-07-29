@@ -1,6 +1,7 @@
 package com.icu.iptmutechat.config;
 
 import com.icu.iptmutechat.IPTMUTECHAT;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -71,7 +72,9 @@ public class ConfigManager {
         String configuredLanguage = config.getString("language", "zh_CN").trim();
         if (!configuredLanguage.equalsIgnoreCase("en_US")) {
             if (!configuredLanguage.equalsIgnoreCase("zh_CN")) {
-                plugin.getLogger().warning("Unsupported language '" + configuredLanguage + "'; using zh_CN.");
+                plugin.getConsoleLogger().warning(
+                        "Unsupported language '" + configuredLanguage + "'; using zh_CN.",
+                        NamedTextColor.YELLOW);
             }
             language = "zh_CN";
             messageConfig = config;
@@ -91,7 +94,8 @@ public class ConfigManager {
             localizedMessages.options().copyDefaults(true);
             localizedMessages.save(languageFile);
         } catch (IOException | NullPointerException e) {
-            plugin.getLogger().warning("Unable to update en_US language defaults: " + e.getMessage());
+            plugin.getConsoleLogger().warning(
+                    "Unable to update en_US language defaults: " + e.getMessage(), NamedTextColor.RED);
         }
         messageConfig = localizedMessages;
     }

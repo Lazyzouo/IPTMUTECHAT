@@ -134,3 +134,24 @@ jobs:
             --notes-file build/release/RELEASE_NOTES.md \
             --generate-notes \
             --verify-tag
+
+      - name: Enforce immutable Release asset filenames
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(printf '%s\n' \
+            "IPTMUTECHAT-${VERSION}-en.us.jar" \
+            "IPTMUTECHAT-${VERSION}-zh.cn.jar" | sort)"
+          actual="$(gh release view "$TAG" --json assets --jq '.assets[].name' | sort)"
+          if [[ "$actual" != "$expected" ]]; then
+            echo "Release assets must contain exactly the two immutable localized filenames." >&2
+            echo "Expected:" >&2
+            echo "$expected" >&2
+            echo "Actual:" >&2
+            echo "$actual" >&2
+            exit 1
+          fi

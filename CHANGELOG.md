@@ -2,6 +2,32 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.3.0] - 2026-07-29
+
+### Added
+
+- Added a bilingual, colorized startup banner with plugin version, author, active server core, tested version, language, repository, and open-source privacy status.
+- Added semantic console colors for update checking, latest-version confirmation, update availability, successful download, restart instructions, manual fallback, and failures while retaining the existing message text.
+
+### Changed
+
+- Official localized packages now follow the immutable `IPTMUTECHAT-<version>-<language>.jar` contract, producing `IPTMUTECHAT-1.3.0-en.us.jar` and `IPTMUTECHAT-1.3.0-zh.cn.jar` for this release.
+- Release automation now fails unless exactly those two versioned localized assets are published with their original filenames.
+- Plugin console output now uses Paper/Folia's component logger so the native `[IPTMUTECHAT]` prefix remains consistent while message content is colorized.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 新增中英双语彩色启动横幅，显示插件版本、作者、当前服务端核心、测试版本、语言、项目地址与开源隐私状态。
+- 为更新检查、已是最新版、发现新版本、下载成功、重启提示、手动下载与更新失败等后台通知增加对应颜色，同时保留原有消息文本。
+- 官方双语包强制使用不可更改的 `IPTMUTECHAT-<版本>-<语言>.jar` 命名；本次发布为 `IPTMUTECHAT-1.3.0-en.us.jar` 与 `IPTMUTECHAT-1.3.0-zh.cn.jar`。
+- Release 自动化现会严格检查自定义资源必须恰好为上述两个原始文件名，任何改名或额外资源都会导致发布失败。
+
 ## [1.2.3] - 2026-07-29
 
 ### Changed
@@ -95,6 +121,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - 新增 `/iphide` OP 隐私开关并持久化隐藏状态。
 - 作者信息统一为 `Lazyz`，玩家可见硬编码文本全部改为语言资源。
 
+[1.3.0]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.3.0
 [1.2.3]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.3
 [1.2.2]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.1

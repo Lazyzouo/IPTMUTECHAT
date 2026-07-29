@@ -15,4 +15,12 @@
 - For every plugin release, update `CHANGELOG.md` with English first and Chinese second.
 - Never commit runtime server folders, personal configuration, logs, credentials, IP records, mute data, or ignore data.
 - After a successful full build and version verification, commit and push the completed update to `origin/main` when the GitHub remote is available.
-- The GitHub Release workflow is responsible for creating the version tag, official Release notes, checksum, JAR, and English preset assets.
+- The GitHub Release workflow is responsible for creating the version tag, official bilingual Release notes, GitHub-provided SHA-256 digests, and the two localized JAR assets.
+
+## Immutable Release Asset Contract
+
+- Every GitHub Release must contain exactly two custom assets named `IPTMUTECHAT-<version>-en.us.jar` and `IPTMUTECHAT-<version>-zh.cn.jar`.
+- These filenames are immutable. Never rename either file before upload, during publication, after publication, or in maintenance automation.
+- Do not publish aliases, unversioned JARs, generic names, checksums, configuration presets, or any other custom Release assets.
+- The Release workflow must fail when either required filename is missing, changed, duplicated, or accompanied by an extra custom asset.
+- GitHub's automatically generated source archives are not custom Release assets and remain available through the repository.

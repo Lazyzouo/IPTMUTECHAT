@@ -21,7 +21,7 @@ IPTMUTECHAT is a bilingual player investigation and chat moderation plugin for P
 
 Sensitive IP data stays on the server and is never sent to GitHub. Access to IP lookup, forced chat, mute management, and OP privacy controls is governed by explicit permissions.
 
-> Current release: **1.2.3** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
+> Current release: **1.3.0** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
 
 ## Features
 
@@ -54,6 +54,8 @@ Sensitive IP data stays on the server and is never sent to GitHub. Access to IP 
 4. Review the privacy notice and permissions before granting `/ipinfo` access.
 
 Both packages contain identical plugin code, resources, and configuration comments. Only the official default `language` parameter differs. You can still switch either package between `en_US` and `zh_CN` in `config.yml` and run `/chatreload`.
+
+Release asset filenames are immutable: every Release contains exactly `IPTMUTECHAT-<version>-en.us.jar` and `IPTMUTECHAT-<version>-zh.cn.jar` as its two custom assets. The publication workflow rejects renamed or additional assets.
 
 ## Commands
 
@@ -101,7 +103,7 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 
 敏感 IP 数据只保存在服务器本地，不会发送至 GitHub。IP 查询、强制发言、禁言管理与 OP 隐私控制均受独立权限节点限制。
 
-> 当前版本：**1.2.3** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
+> 当前版本：**1.3.0** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
 
 ## 功能
 
@@ -133,6 +135,8 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 4. 授予 `/ipinfo` 权限前，请先阅读隐私说明。
 
 两个包包含完全相同的插件代码、资源与配置注释，仅官方默认 `language` 参数不同。任一包仍可在 `config.yml` 中切换 `en_US` 与 `zh_CN`，然后执行 `/chatreload`。
+
+Release 资源文件名不可更改：每个 Release 的自定义资源必须恰好为 `IPTMUTECHAT-<版本>-en.us.jar` 与 `IPTMUTECHAT-<版本>-zh.cn.jar`。发布工作流会拒绝任何改名或额外资源。
 
 ## 配置隔离
 
