@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.icu.iptmutechat'
-version = '1.2.1'
+version = '1.2.2'
 
 ext {
     pluginName = 'IPTMUTECHAT'
@@ -54,4 +54,74 @@ processResources {
     filesMatching(['plugin.yml', 'config.yml']) {
         expand props
     }
+}
+
+def baseJarTask = tasks.named('jar', Jar)
+def localizedJarsTask = tasks.register('localizedJars') {
+    dependsOn baseJarTask
+
+    def zhCnJar = layout.buildDirectory.file("libs/${pluginName}-${version}-zh.cn.jar")
+    def enUsJar = layout.buildDirectory.file("libs/${pluginName}-${version}-en.us.jar")
+    inputs.file(baseJarTask.flatMap { it.archiveFile })
+    outputs.files(zhCnJar, enUsJar)
+
+    doLast {
+        def sourceJar = baseJarTask.get().archiveFile.get().asFile.toPath()
+        def zhCnPath = zhCnJar.get().asFile.toPath()
+        def enUsPath = enUsJar.get().asFile.toPath()
+        java.nio.file.Files.copy(sourceJar, zhCnPath,
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+
+        def sourceZip = new java.util.zip.ZipFile(sourceJar.toFile(), java.nio.charset.StandardCharsets.UTF_8)
+        try {
+            def output = new java.util.zip.ZipOutputStream(java.nio.file.Files.newOutputStream(enUsPath))
+            try {
+                if (sourceZip.comment != null) output.setComment(sourceZip.comment)
+                boolean localizedConfig = false
+
+                sourceZip.entries().each { sourceEntry ->
+                    byte[] data = sourceZip.getInputStream(sourceEntry).withCloseable { it.bytes }
+                    if (sourceEntry.name == 'config.yml') {
+                        String config = new String(data, java.nio.charset.StandardCharsets.UTF_8)
+                        String marker = 'language: zh_CN'
+                        if (config.indexOf(marker) < 0 || config.indexOf(marker) != config.lastIndexOf(marker)) {
+                            throw new GradleException('Expected exactly one official zh_CN language parameter')
+                        }
+                        data = config.replace(marker, 'language: en_US')
+                                .getBytes(java.nio.charset.StandardCharsets.UTF_8)
+                        localizedConfig = true
+                    }
+
+                    def targetEntry = new java.util.zip.ZipEntry(sourceEntry.name)
+                    if (sourceEntry.time >= 0) targetEntry.time = sourceEntry.time
+                    if (sourceEntry.comment != null) targetEntry.comment = sourceEntry.comment
+                    if (sourceEntry.extra != null) targetEntry.extra = sourceEntry.extra
+                    targetEntry.method = sourceEntry.method
+                    if (sourceEntry.method == java.util.zip.ZipEntry.STORED) {
+                        def crc = new java.util.zip.CRC32()
+                        crc.update(data)
+                        targetEntry.size = data.length
+                        targetEntry.compressedSize = data.length
+                        targetEntry.crc = crc.value
+                    }
+
+                    output.putNextEntry(targetEntry)
+                    output.write(data)
+                    output.closeEntry()
+                }
+
+                if (!localizedConfig) {
+                    throw new GradleException('config.yml was not found in the plugin JAR')
+                }
+            } finally {
+                output.close()
+            }
+        } finally {
+            sourceZip.close()
+        }
+    }
+}
+
+tasks.named('assemble') {
+    dependsOn localizedJarsTask
 }
