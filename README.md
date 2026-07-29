@@ -12,7 +12,7 @@ IPTMUTECHAT is a bilingual player investigation and chat moderation plugin for P
 
 Sensitive IP data stays on the server and is never sent to GitHub. Access to IP lookup, forced chat, mute management, and OP privacy controls is governed by explicit permissions.
 
-> Current release: **1.2.1** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
+> Current release: **1.2.2** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
 
 ## Features
 
@@ -25,7 +25,7 @@ Sensitive IP data stays on the server and is never sent to GitHub. Access to IP 
 - Simplified Chinese (`zh_CN`) and English (`en_US`) runtime modes.
 - Startup update checks with direct download, SHA-256 verification, JAR identity validation, and a manual fallback link.
 - Folia-aware plugin metadata and persistent YAML storage.
-- Automated GitHub builds and versioned Releases with release notes, checksums, and an English preset.
+- Automated GitHub builds and versioned Releases with English-default and Chinese-default JARs, official release notes, and GitHub SHA-256 digests.
 
 ## Requirements
 
@@ -39,12 +39,12 @@ Sensitive IP data stays on the server and is never sent to GitHub. Access to IP 
 
 ## Install
 
-1. Download `IPTMUTECHAT-<version>.jar` from [the latest Release](https://github.com/Lazyzouo/IPTMUTECHAT/releases/latest).
+1. Download one package from [the latest Release](https://github.com/Lazyzouo/IPTMUTECHAT/releases/latest): `IPTMUTECHAT-<version>-en.us.jar` for English defaults or `IPTMUTECHAT-<version>-zh.cn.jar` for Simplified Chinese defaults.
 2. Stop the server and place the JAR in `plugins/`.
 3. Start the server once to create `plugins/IPTMUTECHAT/config.yml`.
 4. Review the privacy notice and permissions before granting `/ipinfo` access.
 
-For English, set `language: en_US` and run `/chatreload`, or download the official `config.en_US.yml` Release asset, rename it to `config.yml`, and place it in `plugins/IPTMUTECHAT/` while the server is stopped.
+Both packages contain identical plugin code, resources, and configuration comments. Only the official default `language` parameter differs. You can still switch either package between `en_US` and `zh_CN` in `config.yml` and run `/chatreload`.
 
 ## Commands
 
@@ -76,7 +76,7 @@ See [Configuration](docs/CONFIGURATION.md), [Updater](docs/UPDATER.md), [Privacy
 ./gradlew clean build
 ```
 
-The artifact is written to `build/libs/IPTMUTECHAT-<version>.jar`. `build.gradle` is the version source of truth; processed `plugin.yml` and the JAR filename must match it.
+The localized artifacts are written to `build/libs/IPTMUTECHAT-<version>-en.us.jar` and `build/libs/IPTMUTECHAT-<version>-zh.cn.jar`. `build.gradle` is the version source of truth; processed `plugin.yml` and both JAR filenames must match it.
 
 ## Open Source
 
@@ -92,7 +92,7 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 
 敏感 IP 数据只保存在服务器本地，不会发送至 GitHub。IP 查询、强制发言、禁言管理与 OP 隐私控制均受独立权限节点限制。
 
-> 当前版本：**1.2.1** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
+> 当前版本：**1.2.2** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
 
 ## 功能
 
@@ -104,7 +104,7 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 - 支持私聊快速回复与可配置聊天冷却。
 - 支持简体中文 `zh_CN` 与英文 `en_US` 运行模式。
 - 启动时检查更新，可直接下载并校验 SHA-256 与 JAR 身份；失败时提供手动下载地址。
-- 提供自动构建、自动 Release、更新日志、校验文件及英文预设。
+- 提供自动构建、自动 Release、中英文默认 JAR、官方更新日志及 GitHub SHA-256 摘要。
 
 ## 版本限制
 
@@ -118,12 +118,12 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 
 ## 安装
 
-1. 从[最新 Release](https://github.com/Lazyzouo/IPTMUTECHAT/releases/latest)下载 `IPTMUTECHAT-<版本>.jar`。
+1. 从[最新 Release](https://github.com/Lazyzouo/IPTMUTECHAT/releases/latest)选择下载：英文默认包 `IPTMUTECHAT-<版本>-en.us.jar`，或简体中文默认包 `IPTMUTECHAT-<版本>-zh.cn.jar`。
 2. 停止服务器，将 JAR 放入 `plugins/`。
 3. 启动一次服务器，生成 `plugins/IPTMUTECHAT/config.yml`。
 4. 授予 `/ipinfo` 权限前，请先阅读隐私说明。
 
-英文模式可将 `language` 改为 `en_US` 后执行 `/chatreload`；也可下载 Release 中的官方 `config.en_US.yml`，停服后改名为 `config.yml` 并放入插件目录。
+两个包包含完全相同的插件代码、资源与配置注释，仅官方默认 `language` 参数不同。任一包仍可在 `config.yml` 中切换 `en_US` 与 `zh_CN`，然后执行 `/chatreload`。
 
 ## 配置隔离
 
