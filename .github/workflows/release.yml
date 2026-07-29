@@ -78,29 +78,40 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p build/release
-          jar="build/libs/IPTMUTECHAT-${VERSION}.jar"
-          test -f "$jar"
-          unzip -p "$jar" plugin.yml | grep -F "version: '${VERSION}'"
-          unzip -p "$jar" plugin.yml | grep -F "authors: [Lazyz]"
-          sha256sum "$jar" > "${jar}.sha256"
-          cp presets/config.en_US.yml "build/release/config.en_US.yml"
-          cp src/main/resources/languages/en_US.yml "build/release/messages.en_US.yml"
+          zh_jar="build/libs/IPTMUTECHAT-${VERSION}-zh.cn.jar"
+          en_jar="build/libs/IPTMUTECHAT-${VERSION}-en.us.jar"
+          test -f "$zh_jar"
+          test -f "$en_jar"
+          for jar in "$zh_jar" "$en_jar"; do
+            unzip -p "$jar" plugin.yml | grep -F "version: '${VERSION}'"
+            unzip -p "$jar" plugin.yml | grep -F "authors: [Lazyz]"
+            unzip -l "$jar" | grep -F "languages/en_US.yml"
+          done
+          unzip -p "$zh_jar" config.yml | grep -Fx "language: zh_CN"
+          unzip -p "$en_jar" config.yml | grep -Fx "language: en_US"
+          python3 tools/localize_jar.py --verify "$zh_jar" "$en_jar"
           cat > build/release/RELEASE_NOTES.md <<EOF
           ## Official Release
 
-          This Release was built automatically from the tagged source. The JAR version, embedded plugin metadata, and SHA-256 asset were verified before publishing.
+          This Release was built automatically from the tagged source. Only two custom download assets are published:
+
+          - \`IPTMUTECHAT-${VERSION}-en.us.jar\`: English is the official default language.
+          - \`IPTMUTECHAT-${VERSION}-zh.cn.jar\`: Simplified Chinese is the official default language.
+
+          Both packages contain the same plugin code, resources, and configuration comments. Only the official default \`language\` parameter differs. GitHub records a SHA-256 digest for each asset.
 
           **Compatibility:** Paper/Folia 1.20.1-1.21.11 · **Tested:** 1.21.11 · **Java bytecode:** 17 · **Author:** Lazyz
 
-          English users can download \`config.en_US.yml\` or set \`language: en_US\` in the regular configuration.
-
           ## 官方发布
 
-          本 Release 由对应标签源码自动构建；发布前已核对 JAR 版本、插件元数据与 SHA-256 校验资产。
+          本 Release 由对应标签源码自动构建，只提供两个自定义下载资源：
+
+          - \`IPTMUTECHAT-${VERSION}-en.us.jar\`：官方默认语言为英文。
+          - \`IPTMUTECHAT-${VERSION}-zh.cn.jar\`：官方默认语言为简体中文。
+
+          两个包包含完全相同的插件源码产物、资源与配置注释，仅官方默认 \`language\` 参数不同。GitHub 会为每个资源记录 SHA-256 摘要。
 
           **兼容：** Paper/Folia 1.20.1-1.21.11 · **测试版本：** 1.21.11 · **Java 字节码：** 17 · **作者：** Lazyz
-
-          英文用户可下载 \`config.en_US.yml\`，或在常规配置中设置 \`language: en_US\`。
           EOF
 
       - name: Create tag and GitHub Release
@@ -117,11 +128,60 @@ jobs:
           git tag -a "$TAG" -m "IPTMUTECHAT $TAG"
           git push origin "$TAG"
           gh release create "$TAG" \
-            "build/libs/IPTMUTECHAT-${VERSION}.jar" \
-            "build/libs/IPTMUTECHAT-${VERSION}.jar.sha256" \
-            "build/release/config.en_US.yml" \
-            "build/release/messages.en_US.yml" \
+            "build/libs/IPTMUTECHAT-${VERSION}-en.us.jar" \
+            "build/libs/IPTMUTECHAT-${VERSION}-zh.cn.jar" \
             --title "IPTMUTECHAT $TAG" \
             --notes-file build/release/RELEASE_NOTES.md \
             --generate-notes \
             --verify-tag
+
+      - name: Normalize historical Release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          normalize_release() {
+            local tag="$1"
+            local version="${tag#v}"
+            local en_name="IPTMUTECHAT-${version}-en.us.jar"
+            local zh_name="IPTMUTECHAT-${version}-zh.cn.jar"
+            local work="build/release-history/${tag}"
+            mapfile -t assets < <(gh release view "$tag" --json assets --jq '.assets[].name')
+
+            if [[ "${#assets[@]}" -eq 2 ]] \
+              && printf '%s\n' "${assets[@]}" | grep -Fxq "$en_name" \
+              && printf '%s\n' "${assets[@]}" | grep -Fxq "$zh_name"; then
+              echo "$tag already contains only the two localized JARs."
+              return
+            fi
+
+            rm -rf "$work"
+            mkdir -p "$work"
+            local source_name="IPTMUTECHAT-${version}.jar"
+            if ! printf '%s\n' "${assets[@]}" | grep -Fxq "$source_name"; then
+              source_name="$zh_name"
+            fi
+            if ! printf '%s\n' "${assets[@]}" | grep -Fxq "$source_name"; then
+              echo "Unable to find a Chinese-default source JAR for $tag" >&2
+              return 1
+            fi
+
+            gh release download "$tag" --pattern "$source_name" --dir "$work"
+            if [[ "$source_name" != "$zh_name" ]]; then
+              cp "$work/$source_name" "$work/$zh_name"
+            fi
+            python3 tools/localize_jar.py "$work/$source_name" "$work/$en_name"
+            python3 tools/localize_jar.py --verify "$work/$zh_name" "$work/$en_name"
+
+            gh release upload "$tag" "$work/$en_name" "$work/$zh_name" --clobber
+            for asset in "${assets[@]}"; do
+              if [[ "$asset" != "$en_name" && "$asset" != "$zh_name" ]]; then
+                gh release delete-asset "$tag" "$asset" --yes
+              fi
+            done
+          }
+
+          normalize_release v1.2.0
+          normalize_release v1.2.1
