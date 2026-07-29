@@ -112,14 +112,16 @@ public class GitHubUpdateManager {
 
     private Path downloadVerifiedUpdate(ReleaseInfo release, SemanticVersion latest)
             throws IOException, InterruptedException, NoSuchAlgorithmException {
-        String jarName = "IPTMUTECHAT-" + latest + ".jar";
+        String languageSuffix = "en_US".equalsIgnoreCase(configManager.getLanguage())
+                ? "en.us"
+                : "zh.cn";
+        String jarName = "IPTMUTECHAT-" + latest + "-" + languageSuffix + ".jar";
         Asset jarAsset = findAsset(release.assets(), jarName);
-        Asset checksumAsset = findAsset(release.assets(), jarName + ".sha256");
-        if (jarAsset == null || checksumAsset == null) {
-            throw new IOException("Release is missing the signed update assets");
+        if (jarAsset == null) {
+            throw new IOException("Release is missing the localized update asset: " + jarName);
         }
 
-        String expectedHash = downloadChecksum(checksumAsset.url());
+        String expectedHash = parseSha256Digest(jarAsset.digest());
         Path updateDirectory = plugin.getServer().getUpdateFolderFile().toPath();
         Files.createDirectories(updateDirectory);
         Path temporaryFile = updateDirectory.resolve(jarName + ".download");
@@ -150,15 +152,13 @@ public class GitHubUpdateManager {
         }
     }
 
-    private String downloadChecksum(String url) throws IOException, InterruptedException {
-        HttpResponse<String> response = httpClient.send(
-                request(URI.create(url)), HttpResponse.BodyHandlers.ofString(StandardCharsets.US_ASCII));
-        if (response.statusCode() != 200) {
-            throw new IOException("Checksum download returned HTTP " + response.statusCode());
+    private String parseSha256Digest(String digest) throws IOException {
+        if (digest == null || !digest.startsWith("sha256:")) {
+            throw new IOException("Release asset does not provide a SHA-256 digest");
         }
-        String checksum = response.body().trim().split("\\s+", 2)[0].toLowerCase(Locale.ROOT);
+        String checksum = digest.substring("sha256:".length()).toLowerCase(Locale.ROOT);
         if (!checksum.matches("[0-9a-f]{64}")) {
-            throw new IOException("Release checksum is invalid");
+            throw new IOException("Release asset SHA-256 digest is invalid");
         }
         return checksum;
     }
@@ -169,7 +169,10 @@ public class GitHubUpdateManager {
             JsonObject asset = element.getAsJsonObject();
             String name = asset.get("name").getAsString();
             if (name.equals(expectedName)) {
-                return new Asset(name, asset.get("browser_download_url").getAsString());
+                String digest = asset.has("digest") && !asset.get("digest").isJsonNull()
+                        ? asset.get("digest").getAsString()
+                        : null;
+                return new Asset(name, asset.get("browser_download_url").getAsString(), digest);
             }
         }
         return null;
@@ -235,7 +238,7 @@ public class GitHubUpdateManager {
                 "updater-failed", "reason", reason, "url", REPOSITORY_URL + "/releases/latest"));
     }
 
-    private record Asset(String name, String url) {}
+    private record Asset(String name, String url, String digest) {}
 
     private record ReleaseInfo(String tag, String pageUrl, JsonArray assets) {}
 }
