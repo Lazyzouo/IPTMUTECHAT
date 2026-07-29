@@ -5,7 +5,7 @@ api-version: 1.13
 folia-supported: true
 authors: [${authors}]
 website: https://github.com/Lazyzouo/IPTMUTECHAT
-description: Player IP and chat administration for Paper/Folia / Paper/Folia 玩家IP与聊天管理插件
+description: Player IP/same-IP lookup and chat moderation with OP privacy controls / 玩家IP/同IP查询与聊天管理，支持OP隐私保护
 commands:
   ipinfo:
     description: Query player IP information / 查询玩家IP信息
