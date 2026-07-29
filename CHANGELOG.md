@@ -2,6 +2,26 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.2.3] - 2026-07-29
+
+### Changed
+
+- Added a prominent bilingual open-source and data privacy statement to the top of the project README.
+- Clarified that the plugin contains no telemetry, remote logging, data-collection endpoints, or hidden server-data retrieval mechanisms.
+- Documented that plugin-generated records remain on the installed server and that update checks communicate only with public GitHub Releases over HTTPS.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 在项目 README 顶部新增醒目的中英双语开源与数据隐私声明。
+- 明确插件不包含遥测、远程日志、数据采集端点或隐藏的服务器数据获取机制。
+- 明确插件生成的记录仅保存在安装服务器本地，更新检查仅通过 HTTPS 与公开 GitHub Releases 通信。
+
 ## [1.2.2] - 2026-07-29
 
 ### Changed
@@ -75,6 +95,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - 新增 `/iphide` OP 隐私开关并持久化隐藏状态。
 - 作者信息统一为 `Lazyz`，玩家可见硬编码文本全部改为语言资源。
 
+[1.2.3]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.3
 [1.2.2]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.0

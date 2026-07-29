@@ -6,13 +6,22 @@
 [![Paper/Folia](https://img.shields.io/badge/Paper%20%2F%20Folia-1.20.1--1.21.11-2C2C2C)](https://papermc.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E.svg)](LICENSE)
 
+> [!IMPORTANT]
+> **Open-Source and Data Privacy Statement**
+>
+> IPTMUTECHAT is a fully open-source project. Its source code and release workflow are publicly available for inspection, and the plugin contains no telemetry, remote logging, data-collection endpoints, or hidden mechanisms for retrieving server data. All files and records created by the plugin, including player IP records, moderation data, and configuration, are stored only on the server where the plugin is installed. Updates are published as public artifacts in this GitHub repository; the built-in updater only contacts GitHub Releases over HTTPS to check for and download those published versions. The project does not operate any separate service that receives or collects information from your server.
+>
+> **开源与数据隐私声明**
+>
+> IPTMUTECHAT 是一个完全开源的项目，源码与发布流程均公开可审查。插件不包含遥测、远程日志、数据采集端点或任何隐藏的服务器数据回传机制。插件创建的所有文件与记录，包括玩家 IP 记录、管理数据及配置，均只保存在安装该插件的服务器本地。每次更新都会先作为公开资源发布到本 GitHub 仓库；内置更新器仅通过 HTTPS 访问 GitHub Releases，以检查并下载已发布版本。项目方不运营任何用于接收或收集你的服务器资料的独立服务。
+
 ## Overview
 
 IPTMUTECHAT is a bilingual player investigation and chat moderation plugin for Paper and Folia servers. It gives authorized staff a single, permission-controlled toolkit for reviewing a player's recorded IP address and identifying accounts observed on the same IP, forcing an online player to send a specified chat message, ignoring messages from selected players, and applying permanent or timed mutes. Operators can also use `/iphide` to conceal their own IP information and same-IP account associations from lookup results.
 
 Sensitive IP data stays on the server and is never sent to GitHub. Access to IP lookup, forced chat, mute management, and OP privacy controls is governed by explicit permissions.
 
-> Current release: **1.2.2** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
+> Current release: **1.2.3** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
 
 ## Features
 
@@ -92,7 +101,7 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 
 敏感 IP 数据只保存在服务器本地，不会发送至 GitHub。IP 查询、强制发言、禁言管理与 OP 隐私控制均受独立权限节点限制。
 
-> 当前版本：**1.2.2** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
+> 当前版本：**1.2.3** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
 
 ## 功能
 
