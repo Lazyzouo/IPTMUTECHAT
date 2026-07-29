@@ -9,7 +9,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Release downloads now contain only `IPTMUTECHAT-<version>-en.us.jar` and `IPTMUTECHAT-<version>-zh.cn.jar` as custom assets.
 - Both localized packages preserve identical compiled code, embedded resources, configuration comments, and official parameter values; only the default `language` parameter differs.
 - The startup updater now selects the package matching the active language and verifies the SHA-256 digest supplied by GitHub for that asset.
-- The release workflow normalizes the `v1.2.0` and `v1.2.1` custom assets to the same two-package layout.
+- Historical `v1.2.0` and `v1.2.1` Releases were retired; published downloads begin with `v1.2.2` and use the two-package layout.
 
 ### Compatibility
 
@@ -22,7 +22,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Release 自定义下载资源现仅提供 `IPTMUTECHAT-<版本>-en.us.jar` 与 `IPTMUTECHAT-<版本>-zh.cn.jar`。
 - 两个本地化包保留完全相同的编译代码、内嵌资源、配置注释与官方参数值，仅默认 `language` 参数不同。
 - 启动更新器现会按照当前语言选择对应包，并校验 GitHub 为该资源提供的 SHA-256 摘要。
-- Release 工作流会将 `v1.2.0` 与 `v1.2.1` 的自定义资源统一为相同的双包格式。
+- 历史 `v1.2.0` 与 `v1.2.1` Release 已停止提供；发布下载从 `v1.2.2` 起统一使用双包格式。
 
 ## [1.2.1] - 2026-07-29
 
