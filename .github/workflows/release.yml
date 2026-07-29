@@ -114,6 +114,19 @@ jobs:
           **兼容：** Paper/Folia 1.20.1-1.21.11 · **测试版本：** 1.21.11 · **Java 字节码：** 17 · **作者：** Lazyz
           EOF
 
+          changelog_section="$(awk -v version="$VERSION" '
+            index($0, "## [" version "]") == 1 { capture=1; next }
+            capture && $0 ~ /^## \[/ { exit }
+            capture { print }
+          ' CHANGELOG.md)"
+          test -n "$changelog_section"
+          {
+            echo
+            echo "## Release Changelog / 版本更新日志"
+            echo
+            printf '%s\n' "$changelog_section"
+          } >> build/release/RELEASE_NOTES.md
+
       - name: Create tag and GitHub Release
         if: steps.existing.outputs.exists == 'false'
         env:
