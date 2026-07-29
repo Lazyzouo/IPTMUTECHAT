@@ -16,6 +16,8 @@
 
 `messages` contains the original Simplified Chinese notifications and formatting. English messages are stored in `languages/en_US.yml`, extracted automatically on first use, and may be customized independently.
 
+The English-default and Chinese-default Release JARs preserve the same compiled code, embedded resources, configuration comments, and official parameter values. Their only difference is the embedded `language` default (`en_US` or `zh_CN`). The source English preset remains available in `presets/config.en_US.yml`; it is not published as a separate Release asset.
+
 Run `/chatreload` after changing language, style, chat, updater, or message settings. Updater HTTP client timeouts are applied on the next server restart.
 
 ## Keep personal settings private
@@ -41,6 +43,8 @@ Do not edit source defaults for a live server. Keep local server files below `ru
 | `updater.read-timeout-seconds` | `30` | GitHub 响应/下载超时 |
 
 `messages` 原封保留简体中文通知与样式；英文消息位于 `languages/en_US.yml`，首次使用时自动释放，可单独修改。
+
+Release 中的英文默认包与中文默认包保留相同的编译代码、内嵌资源、配置注释及官方参数值，唯一差异是内嵌的 `language` 默认值（`en_US` 或 `zh_CN`）。源码中的英文预设仍保留在 `presets/config.en_US.yml`，但不再作为独立 Release 资源发布。
 
 修改语言、样式、聊天、更新器或消息后执行 `/chatreload`。更新器网络超时参数在下次服务器重启后生效。
 
