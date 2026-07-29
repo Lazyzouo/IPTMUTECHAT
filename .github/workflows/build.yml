@@ -32,21 +32,30 @@ jobs:
           chmod +x gradlew
           ./gradlew clean build --no-daemon --console=plain
 
-      - name: Verify versioned artifact
+      - name: Verify localized artifacts
         shell: bash
         run: |
           set -euo pipefail
           version="$(sed -n "s/^version = '\([^']*\)'/\1/p" build.gradle)"
-          jar="build/libs/IPTMUTECHAT-${version}.jar"
-          test -f "$jar"
-          unzip -p "$jar" plugin.yml | grep -F "version: '${version}'"
-          unzip -p "$jar" plugin.yml | grep -F "authors: [Lazyz]"
-          unzip -l "$jar" | grep -F "languages/en_US.yml"
+          zh_jar="build/libs/IPTMUTECHAT-${version}-zh.cn.jar"
+          en_jar="build/libs/IPTMUTECHAT-${version}-en.us.jar"
+          test -f "$zh_jar"
+          test -f "$en_jar"
+          for jar in "$zh_jar" "$en_jar"; do
+            unzip -p "$jar" plugin.yml | grep -F "version: '${version}'"
+            unzip -p "$jar" plugin.yml | grep -F "authors: [Lazyz]"
+            unzip -l "$jar" | grep -F "languages/en_US.yml"
+          done
+          unzip -p "$zh_jar" config.yml | grep -Fx "language: zh_CN"
+          unzip -p "$en_jar" config.yml | grep -Fx "language: en_US"
+          python3 tools/localize_jar.py --verify "$zh_jar" "$en_jar"
 
-      - name: Upload JAR
+      - name: Upload localized JARs
         uses: actions/upload-artifact@v4
         with:
-          name: IPTMUTECHAT-build
-          path: build/libs/IPTMUTECHAT-*.jar
+          name: IPTMUTECHAT-localized-jars
+          path: |
+            build/libs/IPTMUTECHAT-*-en.us.jar
+            build/libs/IPTMUTECHAT-*-zh.cn.jar
           if-no-files-found: error
           retention-days: 14
