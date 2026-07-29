@@ -24,7 +24,14 @@ public class ConfigManager {
     public static final int DEFAULT_COOLDOWN = 2;
     public static final String PREFIX = "&#8A2387&l[&#E62028&lIPTMUTECHAT&#8A2387&l] &8&l» &7";
     public static final List<String> CHAT_COMMANDS = List.of("msg", "tell", "w", "whisper", "me", "say");
-    private static final int CONFIG_VERSION = 10;
+    private static final int CONFIG_VERSION = 11;
+    private static final int LANGUAGE_VERSION = 11;
+    private static final List<String> HELP_STYLE_KEYS = List.of(
+            "help-header", "help-title", "help-divider", "help-command", "help-player-section",
+            "help-ignore", "help-ignore-list", "help-reply", "help-admin-section", "help-ipinfo",
+            "help-iphide", "help-mute", "help-unmute", "help-muteinfo", "help-forcesay",
+            "help-whitelist", "help-reload", "help-footer"
+    );
     private static final List<String> MENU_STYLE_KEYS = List.of(
             "mute-info-header", "mute-info-title", "mute-info-player", "mute-info-reason",
             "mute-info-time-left", "mute-info-permanent", "mute-info-temporary", "mute-info-footer",
@@ -33,7 +40,9 @@ public class ConfigManager {
             "ip-hide-disabled", "ip-info-header", "ip-info-title", "ip-info-player",
             "ip-info-address", "ip-info-same-title", "ip-info-same-entry", "ip-info-same-empty", "ip-info-footer",
             "help-header", "help-title", "help-author", "help-divider", "help-command", "help-ignore", "help-ignore-list",
-            "help-reply", "help-iphide", "help-reload", "help-footer"
+            "help-reply", "help-iphide", "help-whitelist", "help-reload", "help-footer",
+            "whitelist-list-header", "whitelist-list-title", "whitelist-list-empty",
+            "whitelist-list-entry", "whitelist-list-footer"
     );
 
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
@@ -87,11 +96,18 @@ public class ConfigManager {
             plugin.saveResource("languages/en_US.yml", false);
         }
         YamlConfiguration localizedMessages = YamlConfiguration.loadConfiguration(languageFile);
+        int currentLanguageVersion = localizedMessages.getInt("language-version", 0);
         try (InputStreamReader reader = new InputStreamReader(
                 plugin.getResource("languages/en_US.yml"), StandardCharsets.UTF_8)) {
             YamlConfiguration defaults = YamlConfiguration.loadConfiguration(reader);
             localizedMessages.setDefaults(defaults);
             localizedMessages.options().copyDefaults(true);
+            if (currentLanguageVersion < LANGUAGE_VERSION) {
+                for (String key : HELP_STYLE_KEYS) {
+                    localizedMessages.set("messages." + key, defaults.getString("messages." + key));
+                }
+                localizedMessages.set("language-version", LANGUAGE_VERSION);
+            }
             localizedMessages.save(languageFile);
         } catch (IOException | NullPointerException e) {
             plugin.getConsoleLogger().warning(
@@ -107,8 +123,8 @@ public class ConfigManager {
             return;
         }
 
+        Configuration defaults = config.getDefaults();
         if (currentVersion < 8) {
-            Configuration defaults = config.getDefaults();
             if (defaults != null) {
                 for (String key : MENU_STYLE_KEYS) {
                     config.set("messages." + key, defaults.getString("messages." + key));
@@ -116,6 +132,11 @@ public class ConfigManager {
             }
             for (String key : REMOVED_MESSAGE_KEYS) {
                 config.set("messages." + key, null);
+            }
+        }
+        if (currentVersion < 11 && defaults != null) {
+            for (String key : HELP_STYLE_KEYS) {
+                config.set("messages." + key, defaults.getString("messages." + key));
             }
         }
         config.set("config-version", CONFIG_VERSION);
@@ -155,6 +176,17 @@ public class ConfigManager {
         return formatNotification(replacePlaceholders(getMessageTemplate(path), replacements));
     }
 
+    public String getStyledMessage(String path, String... replacements) {
+        return ChatColor.BOLD + colorize(
+                replacePlaceholders(getMessageTemplate(path), replacements));
+    }
+
+    public String getCenteredStyledMessage(
+            String separatorPath, String path, String... replacements) {
+        return centerPanelMessage(
+                getStyledMessage(path, replacements), separatorPath);
+    }
+
     public String getCenteredMessage(String separatorPath, String path, String... replacements) {
         return centerPanelMessage(
                 formatNotification(replacePlaceholders(getMessageTemplate(path), replacements)),
@@ -190,15 +222,23 @@ public class ConfigManager {
                 placeholder, value, accentColor);
     }
 
-    public String getIpInfoSeparatorMessage(String path) {
-        String separator = getMessageTemplate(path);
-        int starIndex = separator.indexOf('✧');
-        if (starIndex < 0) return formatIpInfoNotification(separator);
+    public String getSeparatorMessage(String path) {
+        return formatSeparator(
+                getMessageTemplate(path), NOTIFICATION_GRADIENT_START, NOTIFICATION_GRADIENT_END);
+    }
 
+    public String getIpInfoSeparatorMessage(String path) {
         int[] start = parseGradientColor("style.ip-info-gradient-start", IP_INFO_GRADIENT_START);
         int[] end = parseGradientColor("style.ip-info-gradient-end", IP_INFO_GRADIENT_END);
+        return formatSeparator(getMessageTemplate(path), start, end);
+    }
+
+    private String formatSeparator(String separator, int[] start, int[] end) {
+        int starIndex = separator.indexOf('✧');
+        if (starIndex < 0) return formatGradient(separator, start, end);
+
         return formatGradient(separator.substring(0, starIndex), start, end)
-                + formatSolidBold("✧", "#F59E0B")
+                + formatSolidBold("✧", "#FACC15")
                 + formatGradient(separator.substring(starIndex + 1), end, start);
     }
 

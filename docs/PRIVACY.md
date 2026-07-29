@@ -5,6 +5,8 @@ IPTMUTECHAT records player names, IP addresses, and timestamps to provide `/ipin
 - Keep `iptmutechat.ipinfo` restricted to trusted administrators.
 - Do not publish the plugin data directory or support archives containing IP records.
 - `/iphide` controls command output; it does not erase historical storage.
+- Protection-whitelist members can inspect hidden IP and same-IP records. Grant `iptmutechat.whitelist` only to trusted administrators.
+- `whitelist.yml` stores protected player UUIDs and names locally and is never uploaded by the plugin.
 - Stop the server before securely removing records from the data files.
 - Backups may continue to contain previously recorded personal data.
 
@@ -19,6 +21,8 @@ IPTMUTECHAT 会记录玩家名称、IP 地址与时间戳，用于 `/ipinfo` 和
 - 仅向可信管理员授予 `iptmutechat.ipinfo`。
 - 不要公开插件数据目录或包含 IP 记录的支持压缩包。
 - `/iphide` 只控制指令输出，不会删除历史存储。
+- 保护白名单成员可以查看隐藏的 IP 与同 IP 记录；请仅向可信管理员授予 `iptmutechat.whitelist`。
+- `whitelist.yml` 只在服务器本地保存受保护玩家的 UUID 与名称，插件不会上传该文件。
 - 如需删除记录，请先停止服务器，再安全处理数据文件。
 - 备份中可能仍包含之前记录的个人数据。
 

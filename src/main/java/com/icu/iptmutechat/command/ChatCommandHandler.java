@@ -5,6 +5,7 @@ import com.icu.iptmutechat.config.ConfigManager;
 import com.icu.iptmutechat.chat.mute.MuteData;
 import com.icu.iptmutechat.chat.mute.MuteManager;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -55,7 +56,9 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
             case "chatreload" -> reloadConfig(sender);
             case "chathelp" -> sendHelp(sender);
             case "iptmutechat" -> {
-                if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+                if (args.length >= 1 && args[0].equalsIgnoreCase("whitelist")) {
+                    handleWhitelist(sender, java.util.Arrays.copyOfRange(args, 1, args.length));
+                } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                     reloadConfig(sender);
                 } else {
                     sendHelp(sender);
@@ -67,51 +70,57 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(configManager.getMessage("help-header"));
-        sender.sendMessage(configManager.getMessage("help-title",
+        boolean whitelistMember = sender instanceof Player player
+                && plugin.getWhitelistManager().isWhitelisted(player.getUniqueId());
+        sender.sendMessage(configManager.getSeparatorMessage("help-header"));
+        sender.sendMessage(configManager.getCenteredStyledMessage("help-header", "help-title",
                 "name", plugin.getDescription().getName(),
                 "version", plugin.getDescription().getVersion(),
                 "author", String.join(", ", plugin.getDescription().getAuthors())));
-        sender.sendMessage(configManager.getMessage("help-divider"));
-        sender.sendMessage(configManager.getMessage("help-command"));
-        sender.sendMessage(configManager.getMessage("help-player-section"));
+        sender.sendMessage(configManager.getStyledMessage("help-divider"));
+        sender.sendMessage(configManager.getStyledMessage("help-command"));
+        sender.sendMessage(configManager.getStyledMessage("help-player-section"));
         if (sender.hasPermission("iptmutechat.ignore")) {
-            sender.sendMessage(configManager.getMessage("help-ignore"));
-            sender.sendMessage(configManager.getMessage("help-ignore-list"));
+            sender.sendMessage(configManager.getStyledMessage("help-ignore"));
+            sender.sendMessage(configManager.getStyledMessage("help-ignore-list"));
         }
-        sender.sendMessage(configManager.getMessage("help-reply"));
+        sender.sendMessage(configManager.getStyledMessage("help-reply"));
 
-        if (sender.hasPermission("iptmutechat.ipinfo")
+        if (sender.hasPermission("iptmutechat.ipinfo") || whitelistMember
                 || sender.hasPermission("iptmutechat.mute")
                 || sender.hasPermission("iptmutechat.unmute")
                 || sender.hasPermission("iptmutechat.muteinfo")
                 || sender.hasPermission("iptmutechat.forcesay")
                 || sender.hasPermission("iptmutechat.iphide")
+                || sender.hasPermission("iptmutechat.whitelist")
                 || sender.hasPermission("iptmutechat.admin")) {
-            sender.sendMessage(configManager.getMessage("help-admin-section"));
+            sender.sendMessage(configManager.getStyledMessage("help-admin-section"));
         }
-        if (sender.hasPermission("iptmutechat.ipinfo")) {
-            sender.sendMessage(configManager.getMessage("help-ipinfo"));
+        if (sender.hasPermission("iptmutechat.ipinfo") || whitelistMember) {
+            sender.sendMessage(configManager.getStyledMessage("help-ipinfo"));
         }
         if (sender.hasPermission("iptmutechat.iphide")) {
-            sender.sendMessage(configManager.getMessage("help-iphide"));
+            sender.sendMessage(configManager.getStyledMessage("help-iphide"));
         }
         if (sender.hasPermission("iptmutechat.mute")) {
-            sender.sendMessage(configManager.getMessage("help-mute"));
+            sender.sendMessage(configManager.getStyledMessage("help-mute"));
         }
         if (sender.hasPermission("iptmutechat.unmute")) {
-            sender.sendMessage(configManager.getMessage("help-unmute"));
+            sender.sendMessage(configManager.getStyledMessage("help-unmute"));
         }
         if (sender.hasPermission("iptmutechat.muteinfo")) {
-            sender.sendMessage(configManager.getMessage("help-muteinfo"));
+            sender.sendMessage(configManager.getStyledMessage("help-muteinfo"));
         }
         if (sender.hasPermission("iptmutechat.forcesay")) {
-            sender.sendMessage(configManager.getMessage("help-forcesay"));
+            sender.sendMessage(configManager.getStyledMessage("help-forcesay"));
+        }
+        if (sender.hasPermission("iptmutechat.whitelist")) {
+            sender.sendMessage(configManager.getStyledMessage("help-whitelist"));
         }
         if (sender.hasPermission("iptmutechat.admin")) {
-            sender.sendMessage(configManager.getMessage("help-reload"));
+            sender.sendMessage(configManager.getStyledMessage("help-reload"));
         }
-        sender.sendMessage(configManager.getMessage("help-footer"));
+        sender.sendMessage(configManager.getSeparatorMessage("help-footer"));
     }
 
     private void reloadConfig(CommandSender sender) {
@@ -139,6 +148,11 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
             return;
         }
         UUID targetUuid = target.getUniqueId();
+        if (plugin.getWhitelistManager().isWhitelisted(targetUuid)) {
+            sender.sendMessage(configManager.getPrefixedMessage(
+                    "whitelist-mute-denied", "player", target.getName()));
+            return;
+        }
         if (muteManager.isMuted(targetUuid)) {
             sender.sendMessage(configManager.getPrefixedMessage("already-muted"));
             return;
@@ -190,6 +204,82 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
         }
     }
 
+    private void handleWhitelist(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("iptmutechat.whitelist")) {
+            sender.sendMessage(configManager.getPrefixedMessage("no-permission"));
+            return;
+        }
+        if (args.length < 1) {
+            sender.sendMessage(configManager.getPrefixedMessage("whitelist-usage"));
+            return;
+        }
+
+        switch (args[0].toLowerCase()) {
+            case "add" -> addWhitelistPlayer(sender, args);
+            case "remove" -> removeWhitelistPlayer(sender, args);
+            case "list" -> sendWhitelist(sender);
+            default -> sender.sendMessage(configManager.getPrefixedMessage("whitelist-usage"));
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void addWhitelistPlayer(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(configManager.getPrefixedMessage("whitelist-usage"));
+            return;
+        }
+
+        OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+        if (!target.isOnline() && !target.hasPlayedBefore()) {
+            sender.sendMessage(configManager.getPrefixedMessage(
+                    "whitelist-player-not-found", "player", args[1]));
+            return;
+        }
+        String targetName = target.getName() != null ? target.getName() : args[1];
+        if (!plugin.getWhitelistManager().addPlayer(target.getUniqueId(), targetName)) {
+            sender.sendMessage(configManager.getPrefixedMessage(
+                    "whitelist-already-added", "player", targetName));
+            return;
+        }
+
+        muteManager.unmutePlayer(target.getUniqueId());
+        sender.sendMessage(configManager.getPrefixedMessage(
+                "whitelist-added", "player", targetName));
+    }
+
+    private void removeWhitelistPlayer(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(configManager.getPrefixedMessage("whitelist-usage"));
+            return;
+        }
+        if (!plugin.getWhitelistManager().removePlayer(args[1])) {
+            sender.sendMessage(configManager.getPrefixedMessage(
+                    "whitelist-not-found", "player", args[1]));
+            return;
+        }
+        sender.sendMessage(configManager.getPrefixedMessage(
+                "whitelist-removed", "player", args[1]));
+    }
+
+    private void sendWhitelist(CommandSender sender) {
+        List<String> playerNames = plugin.getWhitelistManager().getPlayerNames();
+        sender.sendMessage(configManager.getSeparatorMessage("whitelist-list-header"));
+        sender.sendMessage(configManager.getCenteredMessage(
+                "whitelist-list-header", "whitelist-list-title",
+                "count", String.valueOf(playerNames.size())));
+        if (playerNames.isEmpty()) {
+            sender.sendMessage(configManager.getCenteredMessage(
+                    "whitelist-list-header", "whitelist-list-empty"));
+        } else {
+            for (String playerName : playerNames) {
+                sender.sendMessage(configManager.getCenteredMessage(
+                        "whitelist-list-header", "whitelist-list-entry",
+                        "player", playerName));
+            }
+        }
+        sender.sendMessage(configManager.getSeparatorMessage("whitelist-list-footer"));
+    }
+
     private void handleUnmute(CommandSender sender, String[] args) {
         if (!sender.hasPermission("iptmutechat.unmute")) {
             sender.sendMessage(configManager.getPrefixedMessage("no-permission"));
@@ -232,7 +322,7 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
             return;
         }
 
-        sender.sendMessage(configManager.getMessage("mute-info-header"));
+        sender.sendMessage(configManager.getSeparatorMessage("mute-info-header"));
         sender.sendMessage(configManager.getCenteredMessage("mute-info-header", "mute-info-title"));
         sender.sendMessage(configManager.getCenteredMessage(
                 "mute-info-header", "mute-info-player", "player", target.getName()));
@@ -245,7 +335,7 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
         } else {
             sender.sendMessage(configManager.getCenteredMessage("mute-info-header", "mute-info-temporary"));
         }
-        sender.sendMessage(configManager.getMessage("mute-info-footer"));
+        sender.sendMessage(configManager.getSeparatorMessage("mute-info-footer"));
     }
 
     private void handleIgnore(CommandSender sender, String[] args) {
@@ -293,7 +383,7 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(configManager.getPrefixedMessage("ignore-list-empty"));
             return;
         }
-        player.sendMessage(configManager.getMessage("ignore-list-header"));
+        player.sendMessage(configManager.getSeparatorMessage("ignore-list-header"));
         player.sendMessage(configManager.getCenteredMessage("ignore-list-header", "ignore-list-title"));
         for (UUID uuid : ignoredPlayers) {
             Player ignored = Bukkit.getPlayer(uuid);
@@ -301,7 +391,7 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
             player.sendMessage(configManager.getCenteredMessage(
                     "ignore-list-header", "ignore-list-format", "player", name));
         }
-        player.sendMessage(configManager.getMessage("ignore-list-footer"));
+        player.sendMessage(configManager.getSeparatorMessage("ignore-list-footer"));
     }
 
     private void handleForceSay(CommandSender sender, String[] args) {
@@ -337,7 +427,9 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
             sender.sendMessage(configManager.getPrefixedMessage("reply-offline"));
             return;
         }
-        if (!player.hasPermission("iptmutechat.bypass.muted") && muteManager.isMuted(player.getUniqueId())) {
+        if (!player.hasPermission("iptmutechat.bypass.muted")
+                && !plugin.getWhitelistManager().isWhitelisted(player.getUniqueId())
+                && muteManager.isMuted(player.getUniqueId())) {
             sender.sendMessage(configManager.getPrefixedMessage("reply-muted"));
             return;
         }
@@ -365,6 +457,37 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();
+        if (command.getName().equalsIgnoreCase("iptmutechat")) {
+            if (args.length == 1) {
+                String partial = args[0].toLowerCase();
+                List.of("help", "reload", "whitelist").stream()
+                        .filter(value -> !value.equals("whitelist")
+                                || sender.hasPermission("iptmutechat.whitelist"))
+                        .filter(value -> value.startsWith(partial))
+                        .forEach(completions::add);
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("whitelist")
+                    && sender.hasPermission("iptmutechat.whitelist")) {
+                String partial = args[1].toLowerCase();
+                List.of("add", "remove", "list").stream()
+                        .filter(value -> value.startsWith(partial))
+                        .forEach(completions::add);
+            } else if (args.length == 3 && args[0].equalsIgnoreCase("whitelist")
+                    && sender.hasPermission("iptmutechat.whitelist")) {
+                String partial = args[2].toLowerCase();
+                if (args[1].equalsIgnoreCase("add")) {
+                    Bukkit.getOnlinePlayers().stream()
+                            .filter(player -> !plugin.getWhitelistManager().isWhitelisted(player.getUniqueId()))
+                            .map(Player::getName)
+                            .filter(name -> name.toLowerCase().startsWith(partial))
+                            .forEach(completions::add);
+                } else if (args[1].equalsIgnoreCase("remove")) {
+                    plugin.getWhitelistManager().getPlayerNames().stream()
+                            .filter(name -> name.toLowerCase().startsWith(partial))
+                            .forEach(completions::add);
+                }
+            }
+            return completions;
+        }
         if (args.length == 1) {
             String partial = args[0].toLowerCase();
             Bukkit.getOnlinePlayers().stream()

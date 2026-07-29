@@ -14,6 +14,7 @@ import com.icu.iptmutechat.chat.reply.ReplyManager;
 import com.icu.iptmutechat.ip.IpRecordManager;
 import com.icu.iptmutechat.ip.SimilarIpManager;
 import com.icu.iptmutechat.update.GitHubUpdateManager;
+import com.icu.iptmutechat.whitelist.WhitelistManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IPTMUTECHAT extends JavaPlugin {
@@ -24,6 +25,7 @@ public class IPTMUTECHAT extends JavaPlugin {
     private CooldownManager cooldownManager;
     private MuteManager muteManager;
     private IgnoreManager ignoreManager;
+    private WhitelistManager whitelistManager;
     private ReplyManager replyManager;
     private ChatCommandHandler chatCommandHandler;
 
@@ -39,6 +41,7 @@ public class IPTMUTECHAT extends JavaPlugin {
         this.configManager = new ConfigManager(this);
         this.muteManager = new MuteManager(this);
         this.ignoreManager = new IgnoreManager(this);
+        this.whitelistManager = new WhitelistManager(this);
         this.replyManager = new ReplyManager();
         this.cooldownManager = new CooldownManager(this);
         this.chatCommandHandler = new ChatCommandHandler(this);
@@ -80,6 +83,7 @@ public class IPTMUTECHAT extends JavaPlugin {
     public CooldownManager getCooldownManager() { return cooldownManager; }
     public MuteManager getMuteManager() { return muteManager; }
     public IgnoreManager getIgnoreManager() { return ignoreManager; }
+    public WhitelistManager getWhitelistManager() { return whitelistManager; }
     public ReplyManager getReplyManager() { return replyManager; }
     public IpRecordManager getIpRecordManager() { return ipRecordManager; }
     public SimilarIpManager getSimilarIpManager() { return similarIpManager; }
@@ -97,6 +101,7 @@ public class IPTMUTECHAT extends JavaPlugin {
     public void restoreMissingDataFiles() {
         if (muteManager != null) muteManager.saveData();
         if (ignoreManager != null) ignoreManager.saveData();
+        if (whitelistManager != null) whitelistManager.saveData();
         if (ipRecordManager != null) ipRecordManager.saveData();
         if (similarIpManager != null) similarIpManager.saveData();
     }

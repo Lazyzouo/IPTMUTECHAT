@@ -40,7 +40,9 @@ public class ChatListener implements Listener {
         Player player = event.getPlayer();
         UUID playerUuid = player.getUniqueId();
 
-        if (!player.hasPermission("iptmutechat.bypass.muted") && muteManager.isMuted(playerUuid)) {
+        if (!player.hasPermission("iptmutechat.bypass.muted")
+                && !plugin.getWhitelistManager().isWhitelisted(playerUuid)
+                && muteManager.isMuted(playerUuid)) {
             event.setCancelled(true);
             MuteData muteData = muteManager.getMuteData(playerUuid);
             sendMuteMessage(player, muteData);
@@ -68,7 +70,9 @@ public class ChatListener implements Listener {
         if (!ConfigManager.CHAT_COMMANDS.contains(command)) return;
 
         UUID playerUuid = player.getUniqueId();
-        if (!player.hasPermission("iptmutechat.bypass.muted") && muteManager.isMuted(playerUuid)) {
+        if (!player.hasPermission("iptmutechat.bypass.muted")
+                && !plugin.getWhitelistManager().isWhitelisted(playerUuid)
+                && muteManager.isMuted(playerUuid)) {
             event.setCancelled(true);
             MuteData muteData = muteManager.getMuteData(playerUuid);
             sendMuteMessage(player, muteData);

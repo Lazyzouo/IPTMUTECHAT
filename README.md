@@ -17,22 +17,23 @@
 
 ## Overview
 
-IPTMUTECHAT is a bilingual player investigation and chat moderation plugin for Paper and Folia servers. It gives authorized staff a single, permission-controlled toolkit for reviewing a player's recorded IP address and identifying accounts observed on the same IP, forcing an online player to send a specified chat message, ignoring messages from selected players, and applying permanent or timed mutes. Operators can also use `/iphide` to conceal their own IP information and same-IP account associations from lookup results.
+IPTMUTECHAT is a bilingual player investigation and chat moderation plugin for Paper and Folia servers. It gives authorized staff a single, permission-controlled toolkit for reviewing a player's recorded IP address and identifying accounts observed on the same IP, forcing an online player to send a specified chat message, ignoring messages from selected players, and applying permanent or timed mutes. Operators can also use `/iphide` to conceal their own IP information and same-IP account associations. A command-managed protection whitelist lets explicitly trusted players inspect hidden IP records and remain immune to plugin mutes.
 
-Sensitive IP data stays on the server and is never sent to GitHub. Access to IP lookup, forced chat, mute management, and OP privacy controls is governed by explicit permissions.
+Sensitive IP data and protection-whitelist records stay on the server and are never sent to GitHub. Access to IP lookup, forced chat, mute management, OP privacy controls, and whitelist administration is governed by explicit permissions.
 
-> Current release: **1.3.1** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
+> Current release: **1.4.0** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
 
 ## Features
 
 - Query a player's latest recorded IP and same-IP accounts.
 - Let authorized operators hide their own IP information and same-IP associations from lookup results with `/iphide`.
+- Manage a persistent protection whitelist whose members can query hidden IP/same-IP records and cannot be muted by this plugin.
 - Force an online player to send a specified chat message when the sender has permission.
 - Ignore or restore messages from selected players with a personal ignore list.
 - Permanent and timed mutes with reasons and status inspection.
 - Private-message reply tracking and configurable chat cooldowns.
 - Simplified Chinese (`zh_CN`) and English (`en_US`) runtime modes.
-- Bold player-facing plugin text and pixel-centered mute, ignore-list, and IP panels; the Help menu keeps its established layout.
+- Bold player-facing plugin text, pixel-centered panel content, yellow separator stars, and a centered Help identity line with distinct plugin/version/author colors, white commands, gray descriptions, and single-color section labels.
 - Startup update checks with direct download, SHA-256 verification, JAR identity validation, and a manual fallback link.
 - Folia-aware plugin metadata and persistent YAML storage.
 - Automated GitHub builds and versioned Releases with English-default and Chinese-default JARs, official release notes, and GitHub SHA-256 digests.
@@ -71,6 +72,7 @@ Release asset filenames are immutable: every Release contains exactly `IPTMUTECH
 | `/ignorelist` | Everyone | Show your ignore list |
 | `/forcesay <player> <message>` | OP | Make an online player send a message |
 | `/reply <message>` or `/r` | Everyone | Reply to the last private-message target |
+| `/iptmutechat whitelist add|remove|list [player]` | OP | Manage the IP/mute protection whitelist |
 | `/chatreload` | OP | Reload configuration and language resources |
 | `/chathelp` | Everyone | Show permission-aware help |
 
@@ -78,7 +80,7 @@ Full permission details are in [Commands and permissions](docs/COMMANDS.md).
 
 ## Configuration Safety
 
-The tracked [`src/main/resources/config.yml`](src/main/resources/config.yml) contains only official defaults. Put personal server settings under an ignored local server directory such as `run/plugins/IPTMUTECHAT/config.yml`; runtime directories, logs, player IP records, mute data, and ignore data are excluded by `.gitignore` and must never be committed.
+The tracked [`src/main/resources/config.yml`](src/main/resources/config.yml) contains only official defaults. Put personal server settings under an ignored local server directory such as `run/plugins/IPTMUTECHAT/config.yml`; runtime directories, logs, player IP records, mute data, ignore data, and `whitelist.yml` are excluded by `.gitignore` and must never be committed.
 
 See [Configuration](docs/CONFIGURATION.md), [Updater](docs/UPDATER.md), [Privacy](docs/PRIVACY.md), and [Compatibility](docs/COMPATIBILITY.md).
 
@@ -100,22 +102,23 @@ IPTMUTECHAT is released under the [MIT License](LICENSE). Contributions are gove
 
 ## 项目简介
 
-IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管理插件。获得对应权限的管理人员可通过统一工具查询玩家最近记录的 IP 地址与使用相同 IP 的关联账号、强制在线玩家发送指定消息、忽略或恢复指定玩家的消息，以及执行永久或定时禁言。OP 还可使用 `/iphide`，在查询结果中隐藏自己的 IP 信息与同 IP 账号关联。
+IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管理插件。获得对应权限的管理人员可通过统一工具查询玩家最近记录的 IP 地址与使用相同 IP 的关联账号、强制在线玩家发送指定消息、忽略或恢复指定玩家的消息，以及执行永久或定时禁言。OP 还可使用 `/iphide` 隐藏自己的 IP 信息与同 IP 账号关联；通过指令管理的保护白名单可允许受信任玩家查询隐藏记录并免疫本插件禁言。
 
-敏感 IP 数据只保存在服务器本地，不会发送至 GitHub。IP 查询、强制发言、禁言管理与 OP 隐私控制均受独立权限节点限制。
+敏感 IP 数据与保护白名单记录只保存在服务器本地，不会发送至 GitHub。IP 查询、强制发言、禁言管理、OP 隐私控制与白名单管理均受独立权限节点限制。
 
-> 当前版本：**1.3.1** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
+> 当前版本：**1.4.0** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
 
 ## 功能
 
 - 查询玩家最近记录的 IP 与同 IP 账号。
 - 获得权限的 OP 可使用 `/iphide`，在查询结果中隐藏自己的 IP 信息和同 IP 账号关联。
+- 可通过指令管理持久化保护白名单；名单成员能查询隐藏的 IP/同 IP 记录，并免疫本插件禁言。
 - 获得权限的管理人员可强制在线玩家发送指定聊天消息。
 - 玩家可通过个人屏蔽列表忽略或恢复指定玩家的消息。
 - 支持永久/定时禁言、原因记录及禁言状态查询。
 - 支持私聊快速回复与可配置聊天冷却。
 - 支持简体中文 `zh_CN` 与英文 `en_US` 运行模式。
-- 游戏内插件文本统一以粗体显示；禁言档案、屏蔽列表与 IP 查询面板按分割线星标进行像素居中，Help 菜单保持原有布局。
+- 游戏内插件文本统一以粗体显示，面板内容按星标像素居中且分割线星标统一为黄色；Help 身份栏居中显示，插件名、版本、作者使用不同颜色，指令为白色、说明为灰色，栏目标题使用单一颜色。
 - 启动时检查更新，可直接下载并校验 SHA-256 与 JAR 身份；失败时提供手动下载地址。
 - 提供自动构建、自动 Release、中英文默认 JAR、官方更新日志及 GitHub SHA-256 摘要。
 
@@ -142,6 +145,6 @@ Release 资源文件名不可更改：每个 Release 的自定义资源必须恰
 
 ## 配置隔离
 
-仓库中的 [`src/main/resources/config.yml`](src/main/resources/config.yml) 只保存官方默认参数。个人服务端配置应放在已忽略的运行目录，例如 `run/plugins/IPTMUTECHAT/config.yml`。运行数据、日志、玩家 IP、禁言和屏蔽数据均已排除，不应提交到 GitHub。
+仓库中的 [`src/main/resources/config.yml`](src/main/resources/config.yml) 只保存官方默认参数。个人服务端配置应放在已忽略的运行目录，例如 `run/plugins/IPTMUTECHAT/config.yml`。运行数据、日志、玩家 IP、禁言、屏蔽与 `whitelist.yml` 白名单数据均已排除，不应提交到 GitHub。
 
 完整说明请查看[配置](docs/CONFIGURATION.md)、[指令与权限](docs/COMMANDS.md)、[更新器](docs/UPDATER.md)、[隐私](docs/PRIVACY.md)与[兼容性](docs/COMPATIBILITY.md)。

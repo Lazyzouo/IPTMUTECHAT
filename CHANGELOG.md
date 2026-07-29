@@ -2,6 +2,39 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.4.0] - 2026-07-29
+
+### Added
+
+- Added a command-managed protection whitelist through `/iptmutechat whitelist add|remove|list [player]`, protected by the new `iptmutechat.whitelist` permission.
+- Whitelist members can use `/ipinfo` without the normal lookup permission, inspect records hidden by `/iphide`, and see hidden accounts in same-IP results.
+- Whitelist members are immune to plugin mutes. Adding a member clears any existing plugin mute, and later mute attempts are rejected with a localized notice.
+- Added local UUID/name persistence in `whitelist.yml`; the file remains server-owned runtime data and is excluded from official defaults and publication.
+
+### Changed
+
+- Centered the Help plugin/version/author identity line on the separator's `✧` marker.
+- Restyled Help commands in white and descriptions in gray, with distinct colors for plugin name, version, and author plus single-color player/administrator section labels.
+- Standardized separator `✧` markers to bright yellow while preserving existing panel centering and bold player-facing text.
+- Added scoped Chinese and English Help-style migration without changing personal language, updater, cooldown, prefix, or color parameters.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 新增可通过 `/iptmutechat whitelist add|remove|list [玩家]` 管理的保护白名单，并新增 `iptmutechat.whitelist` 权限。
+- 白名单成员无需普通查询权限即可使用 `/ipinfo`，可查看被 `/iphide` 隐藏的记录及同 IP 隐藏账号。
+- 白名单成员免疫本插件禁言；加入名单时会清除已有禁言，后续禁言操作会被拒绝并显示双语提示。
+- 白名单 UUID 与玩家名仅保存在服务器本地的 `whitelist.yml`，不会进入官方参数或发布资源。
+- Help 的插件名/版本/作者栏现按分隔线 `✧` 居中；插件名、版本与作者使用不同颜色。
+- Help 指令统一为白色、作用说明统一为灰色，“玩家指令”和“管理指令”各自使用单一颜色。
+- 所有分隔线 `✧` 星标统一为亮黄色，并保留现有面板居中与全局粗体效果。
+- 新增限定于中英文 Help 文本的样式迁移，不会更改服主的语言、更新器、冷却、前缀或颜色参数。
+
 ## [1.3.1] - 2026-07-29
 
 ### Changed
@@ -143,6 +176,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - 新增 `/iphide` OP 隐私开关并持久化隐藏状态。
 - 作者信息统一为 `Lazyz`，玩家可见硬编码文本全部改为语言资源。
 
+[1.4.0]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.4.0
 [1.3.1]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.3.0
 [1.2.3]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.3

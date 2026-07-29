@@ -39,8 +39,8 @@ commands:
   chathelp:
     description: View plugin help / 查看插件帮助
   iptmutechat:
-    description: View help or reload configuration / 查看帮助或重载配置
-    usage: /iptmutechat [help|reload]
+    description: View help, reload, or manage the protection whitelist / 查看帮助、重载或管理保护白名单
+    usage: /iptmutechat [help|reload|whitelist <add|remove|list>]
 permissions:
   iptmutechat.ipinfo:
     default: op
@@ -62,5 +62,9 @@ permissions:
     default: op
   iptmutechat.bypass.cooldown:
     default: op
+  iptmutechat.whitelist:
+    default: op
   iptmutechat.admin:
     default: op
+    children:
+      iptmutechat.whitelist: true

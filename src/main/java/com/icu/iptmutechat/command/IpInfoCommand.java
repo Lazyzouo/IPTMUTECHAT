@@ -27,7 +27,9 @@ public class IpInfoCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("iptmutechat.ipinfo")) {
+        boolean whitelistBypass = sender instanceof Player player
+                && plugin.getWhitelistManager().isWhitelisted(player.getUniqueId());
+        if (!sender.hasPermission("iptmutechat.ipinfo") && !whitelistBypass) {
             sender.sendMessage(configManager.getPrefixedIpInfoMessage("no-permission"));
             return true;
         }
@@ -38,7 +40,7 @@ public class IpInfoCommand implements CommandExecutor, TabCompleter {
         }
 
         String playerName = args[0];
-        if (ipRecordManager.isPlayerHidden(playerName)) {
+        if (ipRecordManager.isPlayerHidden(playerName) && !whitelistBypass) {
             sender.sendMessage(configManager.getPrefixedIpInfoAccentMessage(
                     "ip-info-hidden", "player", playerName, "#FACC15"));
             return true;
@@ -52,7 +54,7 @@ public class IpInfoCommand implements CommandExecutor, TabCompleter {
 
         List<String> sameIpPlayers = ipRecordManager.getPlayersByIp(latestIp).stream()
                 .filter(player -> !player.equalsIgnoreCase(playerName))
-                .filter(player -> !ipRecordManager.isPlayerHidden(player))
+                .filter(player -> whitelistBypass || !ipRecordManager.isPlayerHidden(player))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .toList();
         sender.sendMessage(configManager.getIpInfoSeparatorMessage("ip-info-header"));

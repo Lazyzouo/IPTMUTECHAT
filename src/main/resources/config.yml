@@ -9,7 +9,7 @@
 # ============================================================================ #
 
 # 配置版本（请勿手动修改；用于安全迁移默认菜单样式）
-config-version: 10
+config-version: 11
 
 # 界面语言：zh_CN（简体中文）或 en_US（English）
 language: zh_CN
@@ -76,6 +76,20 @@ messages:
   mute-info-temporary: "&8▸ &7禁言类型: &#F2C94C&l临时禁言"
   mute-info-footer: "&#34495E&l------------------ &r&#F2C94C&l✧ &r&#34495E&l------------------"
 
+  # ---- IP 查询与禁言保护白名单 ----
+  whitelist-usage: "&c&l用法错误 &#34495E&l► &#95A5A6&l/iptmutechat whitelist <add|remove|list> [玩家]"
+  whitelist-player-not-found: "&c&l操作失败 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l从未加入过服务器。"
+  whitelist-added: "&a&l操作成功 &#34495E&l► &#95A5A6&l已将玩家 &f&l{player} &#95A5A6&l加入保护白名单。"
+  whitelist-already-added: "&e&l系统提示 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l已在保护白名单中。"
+  whitelist-removed: "&a&l操作成功 &#34495E&l► &#95A5A6&l已将玩家 &f&l{player} &#95A5A6&l移出保护白名单。"
+  whitelist-not-found: "&e&l系统提示 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l不在保护白名单中。"
+  whitelist-mute-denied: "&c&l操作被拒绝 &#34495E&l► &#95A5A6&l玩家 &f&l{player} &#95A5A6&l受白名单保护，无法被禁言。"
+  whitelist-list-header: "&#34495E&l------------------ &r&#FACC15&l✧ &r&#34495E&l------------------"
+  whitelist-list-title: "&#8A2387&l✦ &#B05C9E&l保护白名单 &7&l({count}) &#FACC15&l✦"
+  whitelist-list-empty: "&8&l▸ &7&l当前没有受保护的玩家"
+  whitelist-list-entry: "&8&l▸ &f&l{player}"
+  whitelist-list-footer: "&#34495E&l------------------ &r&#FACC15&l✧ &r&#34495E&l------------------"
+
   # ---- 屏蔽系统提示 ----
   ignore-added: "&a&l操作成功 &#34495E&l► &#95A5A6&l已成功屏蔽玩家 &f&l{player} &#95A5A6&l的消息。"
   ignore-removed: "&a&l操作成功 &#34495E&l► &#95A5A6&l已取消屏蔽玩家 &f&l{player}&#95A5A6&l。"
@@ -137,20 +151,21 @@ messages:
   updater-failed: "自动更新失败：{reason}。请前往 {url} 手动下载。"
 
   # ---- 帮助菜单 ----
-  help-header: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
-  help-title: "&#8A2387&l✦ &#B05C9E&l{name} &7v{version} &8▸ &7作者: &f&l{author} &#8A2387&l✦"
-  help-divider: "&#34495E&l------&#5F526D&l------&#8A5C83&l------&#F2C94C&l---&#8A5C83&l------&#5F526D&l------&#34495E&l------"
-  help-command: "&8▸ &#F2C94C&l/chathelp &7- 查看此帮助菜单"
-  help-player-section: "&#B05C9E&l◆ &f&l玩家指令"
-  help-ignore: "&8▸ &#F2C94C&l/ignore <玩家> &7- 屏蔽或取消屏蔽一名玩家"
-  help-ignore-list: "&8▸ &#F2C94C&l/ignorelist &7- 查看你的屏蔽列表"
-  help-reply: "&8▸ &#F2C94C&l/r <消息> &7- 回复最后一位私聊对象"
-  help-admin-section: "&#FF5E62&l◆ &f&l管理指令"
-  help-ipinfo: "&8▸ &#FF5E62&l/ipinfo <玩家> &7- 查询玩家 IP 信息"
-  help-iphide: "&8▸ &#FF5E62&l/iphide &7- 隐藏或恢复自己的 IP 信息和同 IP 账号"
-  help-mute: "&8▸ &#FF5E62&l/mute <玩家> [时长] [原因] &7- 禁言玩家"
-  help-unmute: "&8▸ &#FF5E62&l/unmute <玩家> &7- 解除玩家禁言"
-  help-muteinfo: "&8▸ &#FF5E62&l/muteinfo <玩家> &7- 查看禁言档案"
-  help-forcesay: "&8▸ &#FF5E62&l/forcesay <玩家> <消息> &7- 强制玩家发言"
-  help-reload: "&8▸ &#FF5E62&l/chatreload &7- 重载插件配置"
-  help-footer: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
+  help-header: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#FACC15&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
+  help-title: "&#B05C9E&l{name} &#3B82F6&lv{version} &#FACC15&l作者: &#22C55E&l{author}"
+  help-divider: "&#34495E&l------&#5F526D&l------&#8A5C83&l------&#FACC15&l---&#8A5C83&l------&#5F526D&l------&#34495E&l------"
+  help-command: "&f&l/chathelp &7&l- 查看此帮助菜单"
+  help-player-section: "&#B05C9E&l◆ 玩家指令"
+  help-ignore: "&f&l/ignore <玩家> &7&l- 屏蔽或取消屏蔽一名玩家"
+  help-ignore-list: "&f&l/ignorelist &7&l- 查看你的屏蔽列表"
+  help-reply: "&f&l/r <消息> &7&l- 回复最后一位私聊对象"
+  help-admin-section: "&#FF5E62&l◆ 管理指令"
+  help-ipinfo: "&f&l/ipinfo <玩家> &7&l- 查询玩家 IP 信息"
+  help-iphide: "&f&l/iphide &7&l- 隐藏或恢复自己的 IP 信息和同 IP 账号"
+  help-mute: "&f&l/mute <玩家> [时长] [原因] &7&l- 禁言玩家"
+  help-unmute: "&f&l/unmute <玩家> &7&l- 解除玩家禁言"
+  help-muteinfo: "&f&l/muteinfo <玩家> &7&l- 查看禁言档案"
+  help-forcesay: "&f&l/forcesay <玩家> <消息> &7&l- 强制玩家发言"
+  help-whitelist: "&f&l/iptmutechat whitelist <add|remove|list> [玩家] &7&l- 管理保护白名单"
+  help-reload: "&f&l/chatreload &7&l- 重载插件配置"
+  help-footer: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#FACC15&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
