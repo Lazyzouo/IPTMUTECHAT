@@ -22,8 +22,11 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $processedVersion = (Select-String -LiteralPath 'build/resources/main/plugin.yml' -Pattern "^version: '([^']+)'$").Matches[0].Groups[1].Value
-$jarPath = "build/libs/IPTMUTECHAT-$version.jar"
-if ($processedVersion -ne $version -or -not (Test-Path -LiteralPath $jarPath)) {
+$englishJarPath = "build/libs/IPTMUTECHAT-$version-en.us.jar"
+$chineseJarPath = "build/libs/IPTMUTECHAT-$version-zh.cn.jar"
+if ($processedVersion -ne $version `
+        -or -not (Test-Path -LiteralPath $englishJarPath) `
+        -or -not (Test-Path -LiteralPath $chineseJarPath)) {
     throw 'Version verification failed.'
 }
 
