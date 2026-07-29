@@ -2,6 +2,30 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.4.1] - 2026-07-30
+
+### Changed
+
+- Reduced the startup banner width and shortened its title while retaining all plugin, platform, compatibility, repository, and privacy details.
+- Replaced the native unstyled logger prefix on startup and updater notices with the plugin's bold purple/red console prefix so the complete prefix now renders in color.
+- Standardized the Version, Author, Core, Tested, and Language rows in white; the single open-source privacy row now uses green while the GitHub row retains its link color.
+- Redesigned every prefixed in-game notification with bold status markers, semantic colors, compact action titles, a consistent separator, neutral body text, and highlighted dynamic values while retaining the existing Help and panel layouts.
+- Added scoped configuration and language migrations that refresh only notification templates while preserving server-owned language, updater, cooldown, prefix, and color parameters.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 缩小服务器启动横幅并精简标题，同时保留插件、核心、兼容版本、项目地址与隐私声明等完整信息。
+- 启动横幅及更新器通知不再使用无法着色的原生日志前缀，现统一显示插件的紫红粗体彩色控制台前缀。
+- 版本、作者、核心、测试版本与语言栏统一改为白色；开源隐私声明改为绿色，GitHub 栏保留链接色。
+- 全面美化所有带插件前缀的游戏内通知，统一使用粗体状态符号、语义颜色、简洁操作标题、分隔符、灰色正文及醒目的动态值，同时保留 Help 与各类信息面板的现有布局。
+- 新增限定于通知模板的中英文配置迁移，不会修改服主的语言、更新器、冷却、插件前缀或颜色参数。
+
 ## [1.4.0] - 2026-07-29
 
 ### Added

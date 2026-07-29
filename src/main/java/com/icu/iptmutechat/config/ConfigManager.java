@@ -24,8 +24,22 @@ public class ConfigManager {
     public static final int DEFAULT_COOLDOWN = 2;
     public static final String PREFIX = "&#8A2387&l[&#E62028&lIPTMUTECHAT&#8A2387&l] &8&l» &7";
     public static final List<String> CHAT_COMMANDS = List.of("msg", "tell", "w", "whisper", "me", "say");
-    private static final int CONFIG_VERSION = 11;
-    private static final int LANGUAGE_VERSION = 11;
+    private static final int CONFIG_VERSION = 12;
+    private static final int LANGUAGE_VERSION = 12;
+    private static final List<String> NOTIFICATION_STYLE_KEYS = List.of(
+            "reload-success", "no-permission", "player-not-found", "unknown-command", "player-only",
+            "cooldown", "muted", "muted-no-reason", "mute-usage", "mute-duration-notice",
+            "mute-type-permanent-notice", "mute-ends-in-notice", "mute-target",
+            "mute-target-with-time", "mute-target-with-reason", "unmute-target", "not-muted",
+            "already-muted", "unmute-usage", "unmuted-player", "muteinfo-usage",
+            "whitelist-usage", "whitelist-player-not-found", "whitelist-added",
+            "whitelist-already-added", "whitelist-removed", "whitelist-not-found",
+            "whitelist-mute-denied", "ignore-added", "ignore-removed", "ignore-already",
+            "ignore-not", "ignore-self", "ignore-exempt", "ignore-usage", "ignore-list-empty",
+            "ip-info-usage", "ip-info-not-found", "ip-info-hidden", "ip-hide-player-only",
+            "ip-hide-enabled", "ip-hide-disabled", "forcesay-usage", "forcesay-success",
+            "reply-usage", "reply-none", "reply-offline", "reply-muted"
+    );
     private static final List<String> HELP_STYLE_KEYS = List.of(
             "help-header", "help-title", "help-divider", "help-command", "help-player-section",
             "help-ignore", "help-ignore-list", "help-reply", "help-admin-section", "help-ipinfo",
@@ -46,6 +60,8 @@ public class ConfigManager {
     );
 
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
+    private static final Pattern NOTIFICATION_COLOR_PATTERN =
+            Pattern.compile("(?i)(&(?:#[0-9a-f]{6}|[0-9a-f]))(?!&l)");
     private static final int[] NOTIFICATION_GRADIENT_START = {0x8A, 0x23, 0x87};
     private static final int[] NOTIFICATION_GRADIENT_END = {0xF2, 0xC9, 0x4C};
     private static final int[] IP_INFO_GRADIENT_START = {0x22, 0xD3, 0xEE};
@@ -102,10 +118,17 @@ public class ConfigManager {
             YamlConfiguration defaults = YamlConfiguration.loadConfiguration(reader);
             localizedMessages.setDefaults(defaults);
             localizedMessages.options().copyDefaults(true);
-            if (currentLanguageVersion < LANGUAGE_VERSION) {
+            if (currentLanguageVersion < 11) {
                 for (String key : HELP_STYLE_KEYS) {
                     localizedMessages.set("messages." + key, defaults.getString("messages." + key));
                 }
+            }
+            if (currentLanguageVersion < 12) {
+                for (String key : NOTIFICATION_STYLE_KEYS) {
+                    localizedMessages.set("messages." + key, defaults.getString("messages." + key));
+                }
+            }
+            if (currentLanguageVersion < LANGUAGE_VERSION) {
                 localizedMessages.set("language-version", LANGUAGE_VERSION);
             }
             localizedMessages.save(languageFile);
@@ -139,6 +162,11 @@ public class ConfigManager {
                 config.set("messages." + key, defaults.getString("messages." + key));
             }
         }
+        if (currentVersion < 12 && defaults != null) {
+            for (String key : NOTIFICATION_STYLE_KEYS) {
+                config.set("messages." + key, defaults.getString("messages." + key));
+            }
+        }
         config.set("config-version", CONFIG_VERSION);
     }
 
@@ -152,20 +180,20 @@ public class ConfigManager {
     public int getUpdateReadTimeoutSeconds() {
         return Math.max(5, config.getInt("updater.read-timeout-seconds", 30));
     }
-    public String getPrefix() { return formatNotification(config.getString("chat.prefix", PREFIX)); }
+    public String getPrefix() { return formatConfiguredNotification(config.getString("chat.prefix", PREFIX)); }
 
     public String getPrefixedMessage(String path, String... replacements) {
-        return formatNotification(config.getString("chat.prefix", PREFIX)
+        return formatConfiguredNotification(config.getString("chat.prefix", PREFIX)
                 + replacePlaceholders(getMessageTemplate(path), replacements));
     }
 
     public String getPrefixedIpInfoMessage(String path, String... replacements) {
-        return formatIpInfoNotification(config.getString("chat.prefix", PREFIX)
+        return formatConfiguredNotification(config.getString("chat.prefix", PREFIX)
                 + replacePlaceholders(getMessageTemplate(path), replacements));
     }
 
     public String formatPrefixedNotification(String text) {
-        return formatNotification(config.getString("chat.prefix", PREFIX) + text);
+        return formatConfiguredNotification(config.getString("chat.prefix", PREFIX) + text);
     }
 
     public String getMessage(String path) {
@@ -217,7 +245,7 @@ public class ConfigManager {
     }
 
     public String getPrefixedIpInfoAccentMessage(String path, String placeholder, String value, String accentColor) {
-        return formatIpInfoAccent(
+        return formatConfiguredAccent(
                 config.getString("chat.prefix", PREFIX) + getMessageTemplate(path),
                 placeholder, value, accentColor);
     }
@@ -292,6 +320,22 @@ public class ConfigManager {
             return getRawMessage("duration-minutes", "minutes", String.valueOf(minutes), "seconds", String.valueOf(seconds % 60));
         }
         return getRawMessage("duration-seconds", "seconds", String.valueOf(seconds));
+    }
+
+    private String formatConfiguredAccent(String message, String placeholder, String value, String accentColor) {
+        String token = "{" + placeholder + "}";
+        int tokenIndex = message.indexOf(token);
+        if (tokenIndex < 0) return formatConfiguredNotification(message);
+        return formatConfiguredNotification(message.substring(0, tokenIndex))
+                + formatSolidBold(value, accentColor)
+                + formatConfiguredNotification(message.substring(tokenIndex + token.length()));
+    }
+
+    private String formatConfiguredNotification(String text) {
+        if (text == null || text.isEmpty()) return "";
+        String boldText = NOTIFICATION_COLOR_PATTERN.matcher(text).replaceAll("$1&l")
+                .replaceAll("(?i)&r(?!&l)", "&r&l");
+        return colorize("&l" + boldText);
     }
 
     private String formatIpInfoAccent(String message, String placeholder, String value, String accentColor) {
