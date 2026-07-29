@@ -6,16 +6,22 @@
 [![Paper/Folia](https://img.shields.io/badge/Paper%20%2F%20Folia-1.20.1--1.21.11-2C2C2C)](https://papermc.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E.svg)](LICENSE)
 
-IPTMUTECHAT is a bilingual administration plugin for Paper and Folia servers. It combines player IP history and same-IP account correlation with practical chat moderation, privacy controls, persistent mute/ignore data, and a verified GitHub updater.
+## Overview
 
-> Current release: **1.2.0** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
+IPTMUTECHAT is a bilingual player investigation and chat moderation plugin for Paper and Folia servers. It gives authorized staff a single, permission-controlled toolkit for reviewing a player's recorded IP address and identifying accounts observed on the same IP, forcing an online player to send a specified chat message, ignoring messages from selected players, and applying permanent or timed mutes. Operators can also use `/iphide` to conceal their own IP information and same-IP account associations from lookup results.
+
+Sensitive IP data stays on the server and is never sent to GitHub. Access to IP lookup, forced chat, mute management, and OP privacy controls is governed by explicit permissions.
+
+> Current release: **1.2.1** · Tested server version: **Paper/Folia 1.21.11** · Author: **Lazyz**
 
 ## Features
 
 - Query a player's latest recorded IP and same-IP accounts.
-- Let authorized operators hide their own IP record with `/iphide`.
+- Let authorized operators hide their own IP information and same-IP associations from lookup results with `/iphide`.
+- Force an online player to send a specified chat message when the sender has permission.
+- Ignore or restore messages from selected players with a personal ignore list.
 - Permanent and timed mutes with reasons and status inspection.
-- Per-player ignore lists, reply tracking, chat cooldowns, and forced chat.
+- Private-message reply tracking and configurable chat cooldowns.
 - Simplified Chinese (`zh_CN`) and English (`en_US`) runtime modes.
 - Startup update checks with direct download, SHA-256 verification, JAR identity validation, and a manual fallback link.
 - Folia-aware plugin metadata and persistent YAML storage.
@@ -80,16 +86,22 @@ IPTMUTECHAT is released under the [MIT License](LICENSE). Contributions are gove
 
 # 中文说明
 
-IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语管理插件，集成玩家 IP 历史与同 IP 账号关联、聊天管理、隐私控制、持久化禁言/屏蔽数据，以及带完整性校验的 GitHub 自动更新器。
+## 项目简介
 
-> 当前版本：**1.2.0** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
+IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管理插件。获得对应权限的管理人员可通过统一工具查询玩家最近记录的 IP 地址与使用相同 IP 的关联账号、强制在线玩家发送指定消息、忽略或恢复指定玩家的消息，以及执行永久或定时禁言。OP 还可使用 `/iphide`，在查询结果中隐藏自己的 IP 信息与同 IP 账号关联。
+
+敏感 IP 数据只保存在服务器本地，不会发送至 GitHub。IP 查询、强制发言、禁言管理与 OP 隐私控制均受独立权限节点限制。
+
+> 当前版本：**1.2.1** · 测试版本：**Paper/Folia 1.21.11** · 作者：**Lazyz**
 
 ## 功能
 
 - 查询玩家最近记录的 IP 与同 IP 账号。
-- 获得权限的 OP 可使用 `/iphide` 隐藏自己的 IP 档案。
+- 获得权限的 OP 可使用 `/iphide`，在查询结果中隐藏自己的 IP 信息和同 IP 账号关联。
+- 获得权限的管理人员可强制在线玩家发送指定聊天消息。
+- 玩家可通过个人屏蔽列表忽略或恢复指定玩家的消息。
 - 支持永久/定时禁言、原因记录及禁言状态查询。
-- 支持玩家屏蔽列表、快速回复、聊天冷却与强制发言。
+- 支持私聊快速回复与可配置聊天冷却。
 - 支持简体中文 `zh_CN` 与英文 `en_US` 运行模式。
 - 启动时检查更新，可直接下载并校验 SHA-256 与 JAR 身份；失败时提供手动下载地址。
 - 提供自动构建、自动 Release、更新日志、校验文件及英文预设。

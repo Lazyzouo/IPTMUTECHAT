@@ -2,6 +2,26 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.2.1] - 2026-07-29
+
+### Changed
+
+- Reworked the official bilingual project overview to clearly describe player IP lookup, same-IP account correlation, forced chat, personal ignore lists, mute management, and OP privacy controls.
+- Clarified that `/iphide` conceals an operator's IP information and same-IP associations from lookup results.
+- Expanded the plugin and GitHub metadata descriptions while preserving English-first ordering.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 重写官方双语项目介绍，明确说明玩家 IP 查询、同 IP 账号关联、强制发言、消息屏蔽、禁言管理和 OP 隐私功能。
+- 明确 `/iphide` 用于在查询结果中隐藏 OP 自身的 IP 信息与同 IP 账号关联。
+- 完善插件与 GitHub 元数据描述，并继续保持英文在前、中文在后。
+
 ## [1.2.0] - 2026-07-29
 
 ### Added
@@ -33,4 +53,5 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - 新增 `/iphide` OP 隐私开关并持久化隐藏状态。
 - 作者信息统一为 `Lazyz`，玩家可见硬编码文本全部改为语言资源。
 
+[1.2.1]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Lazyzouo/IPTMUTECHAT/releases/tag/v1.2.0
