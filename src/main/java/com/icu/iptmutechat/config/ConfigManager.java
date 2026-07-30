@@ -193,60 +193,95 @@ public class ConfigManager {
     public int getUpdateReadTimeoutSeconds() {
         return Math.max(5, config.getInt("updater.read-timeout-seconds", 30));
     }
-    public String getPrefix() { return formatConfiguredNotification(config.getString("chat.prefix", PREFIX)); }
+    public String getPrefix() {
+        return leftAlignMessage(formatConfiguredNotification(config.getString("chat.prefix", PREFIX)));
+    }
 
     public String getPrefixedMessage(String path, String... replacements) {
-        return formatConfiguredNotification(config.getString("chat.prefix", PREFIX)
-                + replacePlaceholders(getMessageTemplate(path), replacements));
+        return leftAlignMessage(formatConfiguredNotification(config.getString("chat.prefix", PREFIX)
+                + replacePlaceholders(getMessageTemplate(path), replacements)));
     }
 
     public String getPrefixedIpInfoMessage(String path, String... replacements) {
-        return formatConfiguredNotification(config.getString("chat.prefix", PREFIX)
-                + replacePlaceholders(getMessageTemplate(path), replacements));
+        return leftAlignMessage(formatConfiguredNotification(config.getString("chat.prefix", PREFIX)
+                + replacePlaceholders(getMessageTemplate(path), replacements)));
     }
 
     public String formatPrefixedNotification(String text) {
-        return formatConfiguredNotification(config.getString("chat.prefix", PREFIX) + text);
+        return leftAlignMessage(formatConfiguredNotification(config.getString("chat.prefix", PREFIX) + text));
     }
 
     public String getMessage(String path) {
-        return formatNotification(getMessageTemplate(path));
+        return leftAlignMessage(formatNotification(getMessageTemplate(path)));
     }
 
     public String getMessage(String path, String... replacements) {
-        return formatNotification(replacePlaceholders(getMessageTemplate(path), replacements));
+        return leftAlignMessage(formatNotification(replacePlaceholders(getMessageTemplate(path), replacements)));
     }
 
     public String getStyledMessage(String path, String... replacements) {
-        return ChatColor.BOLD + colorize(
-                replacePlaceholders(getMessageTemplate(path), replacements));
+        return leftAlignMessage(ChatColor.BOLD + colorize(
+                replacePlaceholders(getMessageTemplate(path), replacements)));
     }
 
     public String getIpInfoMessage(String path, String... replacements) {
-        return formatIpInfoNotification(
-                replacePlaceholders(getMessageTemplate(path), replacements));
+        return leftAlignMessage(formatIpInfoNotification(
+                replacePlaceholders(getMessageTemplate(path), replacements)));
     }
 
     public String getIpInfoAccentMessage(String path, String placeholder, String value, String accentColor) {
-        return formatIpInfoAccent(
-                getMessageTemplate(path), placeholder, value, accentColor);
+        return leftAlignMessage(formatIpInfoAccent(
+                getMessageTemplate(path), placeholder, value, accentColor));
     }
 
     public String getPrefixedIpInfoAccentMessage(String path, String placeholder, String value, String accentColor) {
-        return formatConfiguredAccent(
+        return leftAlignMessage(formatConfiguredAccent(
                 config.getString("chat.prefix", PREFIX) + getMessageTemplate(path),
-                placeholder, value, accentColor);
+                placeholder, value, accentColor));
     }
 
     public String getSeparatorMessage(String path) {
-        return formatSeparator(
-                getMessageTemplate(path), NOTIFICATION_GRADIENT_START, NOTIFICATION_GRADIENT_END);
+        return leftAlignMessage(formatSeparator(
+                getMessageTemplate(path), NOTIFICATION_GRADIENT_START, NOTIFICATION_GRADIENT_END));
     }
 
     public String getIpInfoSeparatorMessage(String path) {
         int[] start = parseGradientColor("style.ip-info-gradient-start", IP_INFO_GRADIENT_START);
         int[] end = parseGradientColor("style.ip-info-gradient-end", IP_INFO_GRADIENT_END);
-        return formatSeparator(getMessageTemplate(path), start, end);
+        return leftAlignMessage(formatSeparator(getMessageTemplate(path), start, end));
+    }
+
+    private static String leftAlignMessage(String message) {
+        if (message == null || message.isEmpty()) return "";
+
+        StringBuilder aligned = new StringBuilder(message.length());
+        int index = 0;
+        boolean lineStart = true;
+        while (index < message.length()) {
+            if (lineStart) {
+                StringBuilder formattingCodes = new StringBuilder();
+                while (index < message.length() && message.charAt(index) != '\n') {
+                    char current = message.charAt(index);
+                    if (current == ChatColor.COLOR_CHAR && index + 1 < message.length()) {
+                        formattingCodes.append(current).append(message.charAt(index + 1));
+                        index += 2;
+                        continue;
+                    }
+
+                    int codePoint = message.codePointAt(index);
+                    if (!Character.isWhitespace(codePoint)) break;
+                    index += Character.charCount(codePoint);
+                }
+                aligned.append(formattingCodes);
+                lineStart = false;
+                if (index >= message.length()) break;
+            }
+
+            char current = message.charAt(index++);
+            aligned.append(current);
+            if (current == '\n') lineStart = true;
+        }
+        return aligned.toString();
     }
 
     private String formatSeparator(String separator, int[] start, int[] end) {

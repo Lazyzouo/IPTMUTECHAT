@@ -2,6 +2,26 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.4.6] - 2026-07-30
+
+### Fixed
+
+- Enforced left alignment at every player-facing message output, including prefixed notifications, Help, mute records, whitelist and ignore panels, IP information, and separator lines.
+- Removed leading spaces and tabs after legacy color or formatting codes on every rendered line, covering customized and legacy message configurations as well as official defaults.
+- Kept the independent server-console startup banner unchanged.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 在全部游戏内消息出口强制应用左对齐，包括带前缀通知、Help、禁言档案、白名单与屏蔽面板、IP 信息及分割线。
+- 逐行移除旧版颜色或格式代码之后的前导空格与制表符，同时覆盖自定义配置、旧配置及官方默认消息。
+- 独立的服务器后台插件启动横幅保持不变。
+
 ## [1.4.5] - 2026-07-30
 
 ### Changed
