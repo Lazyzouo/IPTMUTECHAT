@@ -2,6 +2,26 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.4.3] - 2026-07-30
+
+### Changed
+
+- Reworked the startup banner into a wide management-service layout with centered bilingual headings and full cyan borders matching the requested reference style.
+- Reordered the detail rows to Version, Author, Tested, Language, GitHub, and Open source; removed the separate Core row and applied semantic green, yellow, aqua, blue, and white values.
+- Retained the colored plugin console prefix and display-width-aware closing border on every banner line.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 参考指定样式，将启动横幅改为宽版管理服务布局，使用居中的双语标题与完整青色边框。
+- 详情栏调整为版本、作者、测试、语言、GitHub 与开源声明，移除独立核心栏，并分别应用绿色、黄色、青色、蓝色与白色数值。
+- 保留彩色插件控制台前缀，并继续按显示宽度为每一行生成闭合右边框。
+
 ## [1.4.2] - 2026-07-30
 
 ### Fixed
