@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.icu.iptmutechat'
-version = '1.4.1'
+version = '1.4.2'
 
 ext {
     pluginName = 'IPTMUTECHAT'

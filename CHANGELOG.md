@@ -2,6 +2,24 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.4.2] - 2026-07-30
+
+### Fixed
+
+- Added display-width-aware right padding and a closing border to every startup banner detail row.
+- Widened the detail label column so the bilingual open-source label aligns with the other fields without increasing the compact banner width.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 为启动横幅的每一条详情栏增加按显示宽度计算的右侧补白及闭合边框。
+- 加宽详情标签栏，使双语开源标签与其他字段整齐对齐，同时保持现有紧凑横幅宽度不变。
+
 ## [1.4.1] - 2026-07-30
 
 ### Changed

@@ -10,7 +10,7 @@ import org.bukkit.command.ConsoleCommandSender;
 public final class PluginConsoleLogger {
 
     private static final int BANNER_WIDTH = 66;
-    private static final int LABEL_WIDTH = 16;
+    private static final int LABEL_WIDTH = 18;
     private static final TextColor PREFIX_BRACKET_COLOR = TextColor.color(0x8A2387);
     private static final TextColor PREFIX_NAME_COLOR = TextColor.color(0xE62028);
     private static final TextColor BORDER_COLOR = TextColor.color(0x27D3F2);
@@ -81,10 +81,16 @@ public final class PluginConsoleLogger {
     }
 
     private void row(String label, String value, TextColor labelColor, TextColor valueColor) {
+        String paddedLabel = padRight(label, LABEL_WIDTH);
+        int contentWidth = 1 + displayWidth(paddedLabel) + 2 + displayWidth(value);
+        int rightPadding = Math.max(0, BANNER_WIDTH - 2 - contentWidth);
+
         send(Component.text("| ", BORDER_COLOR, TextDecoration.BOLD)
-                .append(Component.text(padRight(label, LABEL_WIDTH), labelColor))
+                .append(Component.text(paddedLabel, labelColor))
                 .append(Component.text(": ", NamedTextColor.DARK_GRAY))
-                .append(Component.text(value, valueColor)));
+                .append(Component.text(value, valueColor))
+                .append(Component.text(" ".repeat(rightPadding)))
+                .append(Component.text("|", BORDER_COLOR, TextDecoration.BOLD)));
     }
 
     private void send(Component message) {
@@ -92,7 +98,7 @@ public final class PluginConsoleLogger {
     }
 
     private String padRight(String text, int targetWidth) {
-        return text + " ".repeat(Math.max(1, targetWidth - displayWidth(text)));
+        return text + " ".repeat(Math.max(0, targetWidth - displayWidth(text)));
     }
 
     private int displayWidth(String text) {
