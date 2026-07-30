@@ -9,8 +9,8 @@ import org.bukkit.command.ConsoleCommandSender;
 
 public final class PluginConsoleLogger {
 
-    private static final int BANNER_WIDTH = 88;
-    private static final int LABEL_WIDTH = 18;
+    private static final int BANNER_WIDTH = 62;
+    private static final int LABEL_WIDTH = 14;
     private static final TextColor PREFIX_BRACKET_COLOR = TextColor.color(0x8A2387);
     private static final TextColor PREFIX_NAME_COLOR = TextColor.color(0xE62028);
     private static final TextColor BORDER_COLOR = TextColor.color(0x27D3F2);
@@ -19,9 +19,10 @@ public final class PluginConsoleLogger {
     private static final TextColor LINK_COLOR = TextColor.color(0x3B82F6);
     private static final TextColor TEXT_COLOR = TextColor.color(0xF2F5F7);
 
-    private static final Component CONSOLE_PREFIX = Component.text("[", PREFIX_BRACKET_COLOR, TextDecoration.BOLD)
+    private static final Component PLUGIN_PREFIX = Component.text("[", PREFIX_BRACKET_COLOR, TextDecoration.BOLD)
             .append(Component.text("IPTMUTECHAT", PREFIX_NAME_COLOR, TextDecoration.BOLD))
-            .append(Component.text("] ", PREFIX_BRACKET_COLOR, TextDecoration.BOLD))
+            .append(Component.text("] ", PREFIX_BRACKET_COLOR, TextDecoration.BOLD));
+    private static final Component MESSAGE_PREFIX = PLUGIN_PREFIX
             .append(Component.text("\u00bb ", NamedTextColor.DARK_GRAY, TextDecoration.BOLD));
 
     private final ConsoleCommandSender console;
@@ -40,19 +41,18 @@ public final class PluginConsoleLogger {
 
     public void printStartupBanner(String version, String language, String platform, String repositoryUrl) {
         border('=');
-        centered("IPTMUTECHAT MANAGEMENT SERVICE v" + version, TITLE_COLOR, true);
-        centered("IP & CHAT MANAGEMENT / IP 与聊天管理", TEXT_COLOR, false);
-        border('=');
+        centered("IPTMUTECHAT IP & CHAT MANAGEMENT v" + version, TITLE_COLOR, true);
+        centered("IP & CHAT CONTROL / IP 与聊天管理", TEXT_COLOR, false);
+        border('-');
         row("Version / 版本", version, NamedTextColor.WHITE, NamedTextColor.GREEN);
-        row("Author / 作者", "Lazyz", NamedTextColor.WHITE, AUTHOR_COLOR);
-        row("Tested / 测试", "Paper & Folia 1.21.11", NamedTextColor.WHITE, NamedTextColor.GREEN);
-        row("Language / 语言", language, NamedTextColor.WHITE, NamedTextColor.AQUA);
+        row("Author  / 作者", "Lazyz", NamedTextColor.WHITE, AUTHOR_COLOR);
+        row("Tested  / 测试", "Paper & Folia 1.21.11", NamedTextColor.WHITE, NamedTextColor.GREEN);
+        row("Language/ 语言", language, NamedTextColor.WHITE, NamedTextColor.AQUA);
         row("GitHub", repositoryUrl, NamedTextColor.WHITE, LINK_COLOR);
-        row("Open source", "No telemetry or server-data upload.", NamedTextColor.GREEN, NamedTextColor.WHITE);
+        statementRow("Open source.", " No telemetry or server-data upload.", NamedTextColor.GREEN, NamedTextColor.WHITE);
         border('=');
 
-        Component success = Component.text("» ", BORDER_COLOR)
-                .append(Component.text("IPTMUTECHAT v" + version, TITLE_COLOR, TextDecoration.BOLD))
+        Component success = Component.text("IPTMUTECHAT v" + version, TITLE_COLOR, TextDecoration.BOLD)
                 .append(Component.text(" by Lazyz started successfully on ", NamedTextColor.GREEN))
                 .append(Component.text(platform, NamedTextColor.LIGHT_PURPLE))
                 .append(Component.text(" / 已在 ", NamedTextColor.GREEN))
@@ -62,7 +62,7 @@ public final class PluginConsoleLogger {
     }
 
     private void border(char fill) {
-        send(Component.text("+" + String.valueOf(fill).repeat(BANNER_WIDTH - 2) + "+",
+        sendBanner(Component.text("+" + String.valueOf(fill).repeat(BANNER_WIDTH - 2) + "+",
                 BORDER_COLOR, TextDecoration.BOLD));
     }
 
@@ -74,7 +74,7 @@ public final class PluginConsoleLogger {
 
         Component content = Component.text(text, color);
         if (bold) content = content.decorate(TextDecoration.BOLD);
-        send(Component.text("|", BORDER_COLOR, TextDecoration.BOLD)
+        sendBanner(Component.text("|", BORDER_COLOR, TextDecoration.BOLD)
                 .append(Component.text(" ".repeat(leftPadding)))
                 .append(content)
                 .append(Component.text(" ".repeat(rightPadding)))
@@ -83,19 +83,34 @@ public final class PluginConsoleLogger {
 
     private void row(String label, String value, TextColor labelColor, TextColor valueColor) {
         String paddedLabel = padRight(label, LABEL_WIDTH);
-        int contentWidth = 1 + displayWidth(paddedLabel) + 2 + displayWidth(value);
+        int contentWidth = 1 + displayWidth(paddedLabel) + 3 + displayWidth(value);
         int rightPadding = Math.max(0, BANNER_WIDTH - 2 - contentWidth);
 
-        send(Component.text("| ", BORDER_COLOR, TextDecoration.BOLD)
+        sendBanner(Component.text("| ", BORDER_COLOR, TextDecoration.BOLD)
                 .append(Component.text(paddedLabel, labelColor))
-                .append(Component.text(": ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(" : ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(value, valueColor))
+                .append(Component.text(" ".repeat(rightPadding)))
+                .append(Component.text("|", BORDER_COLOR, TextDecoration.BOLD)));
+    }
+
+    private void statementRow(String label, String value, TextColor labelColor, TextColor valueColor) {
+        int contentWidth = 1 + displayWidth(label) + displayWidth(value);
+        int rightPadding = Math.max(0, BANNER_WIDTH - 2 - contentWidth);
+
+        sendBanner(Component.text("| ", BORDER_COLOR, TextDecoration.BOLD)
+                .append(Component.text(label, labelColor))
                 .append(Component.text(value, valueColor))
                 .append(Component.text(" ".repeat(rightPadding)))
                 .append(Component.text("|", BORDER_COLOR, TextDecoration.BOLD)));
     }
 
     private void send(Component message) {
-        console.sendMessage(CONSOLE_PREFIX.append(message));
+        console.sendMessage(MESSAGE_PREFIX.append(message));
+    }
+
+    private void sendBanner(Component message) {
+        console.sendMessage(PLUGIN_PREFIX.append(message));
     }
 
     private String padRight(String text, int targetWidth) {

@@ -2,6 +2,26 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.4.4] - 2026-07-30
+
+### Changed
+
+- Reduced the startup banner from 88 to 62 columns, matching the requested 60-character border layout.
+- Matched the reference field spacing with a 14-column bilingual label area, spaced colons, a dashed inner divider, and a single unlabelled open-source statement row.
+- Removed the chevron from banner-line prefixes while retaining it for normal console notices, and removed the duplicate chevron from the startup-success line.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 将启动横幅由 88 列缩短至 62 列，匹配指定的 60 个填充字符边框布局。
+- 按参考格式使用 14 列双语标签、两侧留空格的冒号、内部短横分隔线及无冒号的单行开源声明。
+- 横幅行的插件前缀不再附带箭头，普通控制台通知继续保留箭头，并移除启动成功行中可能重复的箭头。
+
 ## [1.4.3] - 2026-07-30
 
 ### Changed
