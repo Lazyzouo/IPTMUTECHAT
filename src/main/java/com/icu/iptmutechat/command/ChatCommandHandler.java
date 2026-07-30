@@ -73,7 +73,7 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
         boolean whitelistMember = sender instanceof Player player
                 && plugin.getWhitelistManager().isWhitelisted(player.getUniqueId());
         sender.sendMessage(configManager.getSeparatorMessage("help-header"));
-        sender.sendMessage(configManager.getCenteredStyledMessage("help-header", "help-title",
+        sender.sendMessage(configManager.getStyledMessage("help-title",
                 "name", plugin.getDescription().getName(),
                 "version", plugin.getDescription().getVersion(),
                 "author", String.join(", ", plugin.getDescription().getAuthors())));
@@ -264,16 +264,15 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
     private void sendWhitelist(CommandSender sender) {
         List<String> playerNames = plugin.getWhitelistManager().getPlayerNames();
         sender.sendMessage(configManager.getSeparatorMessage("whitelist-list-header"));
-        sender.sendMessage(configManager.getCenteredMessage(
-                "whitelist-list-header", "whitelist-list-title",
+        sender.sendMessage(configManager.getMessage(
+                "whitelist-list-title",
                 "count", String.valueOf(playerNames.size())));
         if (playerNames.isEmpty()) {
-            sender.sendMessage(configManager.getCenteredMessage(
-                    "whitelist-list-header", "whitelist-list-empty"));
+            sender.sendMessage(configManager.getMessage("whitelist-list-empty"));
         } else {
             for (String playerName : playerNames) {
-                sender.sendMessage(configManager.getCenteredMessage(
-                        "whitelist-list-header", "whitelist-list-entry",
+                sender.sendMessage(configManager.getMessage(
+                        "whitelist-list-entry",
                         "player", playerName));
             }
         }
@@ -323,17 +322,17 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
         }
 
         sender.sendMessage(configManager.getSeparatorMessage("mute-info-header"));
-        sender.sendMessage(configManager.getCenteredMessage("mute-info-header", "mute-info-title"));
-        sender.sendMessage(configManager.getCenteredMessage(
-                "mute-info-header", "mute-info-player", "player", target.getName()));
-        sender.sendMessage(configManager.getCenteredMessage("mute-info-header",
+        sender.sendMessage(configManager.getMessage("mute-info-title"));
+        sender.sendMessage(configManager.getMessage(
+                "mute-info-player", "player", target.getName()));
+        sender.sendMessage(configManager.getMessage(
                 "mute-info-reason", "reason", configManager.localizeReason(data.getReason())));
-        sender.sendMessage(configManager.getCenteredMessage("mute-info-header",
+        sender.sendMessage(configManager.getMessage(
                 "mute-info-time-left", "time", configManager.formatDuration(data.getRemainingTime())));
         if (data.isPermanent()) {
-            sender.sendMessage(configManager.getCenteredMessage("mute-info-header", "mute-info-permanent"));
+            sender.sendMessage(configManager.getMessage("mute-info-permanent"));
         } else {
-            sender.sendMessage(configManager.getCenteredMessage("mute-info-header", "mute-info-temporary"));
+            sender.sendMessage(configManager.getMessage("mute-info-temporary"));
         }
         sender.sendMessage(configManager.getSeparatorMessage("mute-info-footer"));
     }
@@ -384,12 +383,12 @@ public class ChatCommandHandler implements CommandExecutor, TabCompleter {
             return;
         }
         player.sendMessage(configManager.getSeparatorMessage("ignore-list-header"));
-        player.sendMessage(configManager.getCenteredMessage("ignore-list-header", "ignore-list-title"));
+        player.sendMessage(configManager.getMessage("ignore-list-title"));
         for (UUID uuid : ignoredPlayers) {
             Player ignored = Bukkit.getPlayer(uuid);
             String name = ignored != null ? ignored.getName() : configManager.getRawMessage("unknown-player");
-            player.sendMessage(configManager.getCenteredMessage(
-                    "ignore-list-header", "ignore-list-format", "player", name));
+            player.sendMessage(configManager.getMessage(
+                    "ignore-list-format", "player", name));
         }
         player.sendMessage(configManager.getSeparatorMessage("ignore-list-footer"));
     }

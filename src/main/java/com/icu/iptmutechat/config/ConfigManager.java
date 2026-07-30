@@ -24,8 +24,8 @@ public class ConfigManager {
     public static final int DEFAULT_COOLDOWN = 2;
     public static final String PREFIX = "&#8A2387&l[&#E62028&lIPTMUTECHAT&#8A2387&l] &8&l» &7";
     public static final List<String> CHAT_COMMANDS = List.of("msg", "tell", "w", "whisper", "me", "say");
-    private static final int CONFIG_VERSION = 12;
-    private static final int LANGUAGE_VERSION = 12;
+    private static final int CONFIG_VERSION = 13;
+    private static final int LANGUAGE_VERSION = 13;
     private static final List<String> NOTIFICATION_STYLE_KEYS = List.of(
             "reload-success", "no-permission", "player-not-found", "unknown-command", "player-only",
             "cooldown", "muted", "muted-no-reason", "mute-usage", "mute-duration-notice",
@@ -45,6 +45,9 @@ public class ConfigManager {
             "help-ignore", "help-ignore-list", "help-reply", "help-admin-section", "help-ipinfo",
             "help-iphide", "help-mute", "help-unmute", "help-muteinfo", "help-forcesay",
             "help-whitelist", "help-reload", "help-footer"
+    );
+    private static final List<String> LEFT_ALIGNMENT_STYLE_KEYS = List.of(
+            "ip-info-same-entry", "ip-info-same-empty"
     );
     private static final List<String> MENU_STYLE_KEYS = List.of(
             "mute-info-header", "mute-info-title", "mute-info-player", "mute-info-reason",
@@ -128,6 +131,11 @@ public class ConfigManager {
                     localizedMessages.set("messages." + key, defaults.getString("messages." + key));
                 }
             }
+            if (currentLanguageVersion < 13) {
+                for (String key : LEFT_ALIGNMENT_STYLE_KEYS) {
+                    localizedMessages.set("messages." + key, defaults.getString("messages." + key));
+                }
+            }
             if (currentLanguageVersion < LANGUAGE_VERSION) {
                 localizedMessages.set("language-version", LANGUAGE_VERSION);
             }
@@ -164,6 +172,11 @@ public class ConfigManager {
         }
         if (currentVersion < 12 && defaults != null) {
             for (String key : NOTIFICATION_STYLE_KEYS) {
+                config.set("messages." + key, defaults.getString("messages." + key));
+            }
+        }
+        if (currentVersion < 13 && defaults != null) {
+            for (String key : LEFT_ALIGNMENT_STYLE_KEYS) {
                 config.set("messages." + key, defaults.getString("messages." + key));
             }
         }
@@ -209,18 +222,6 @@ public class ConfigManager {
                 replacePlaceholders(getMessageTemplate(path), replacements));
     }
 
-    public String getCenteredStyledMessage(
-            String separatorPath, String path, String... replacements) {
-        return centerPanelMessage(
-                getStyledMessage(path, replacements), separatorPath);
-    }
-
-    public String getCenteredMessage(String separatorPath, String path, String... replacements) {
-        return centerPanelMessage(
-                formatNotification(replacePlaceholders(getMessageTemplate(path), replacements)),
-                separatorPath);
-    }
-
     public String getIpInfoMessage(String path, String... replacements) {
         return formatIpInfoNotification(
                 replacePlaceholders(getMessageTemplate(path), replacements));
@@ -229,19 +230,6 @@ public class ConfigManager {
     public String getIpInfoAccentMessage(String path, String placeholder, String value, String accentColor) {
         return formatIpInfoAccent(
                 getMessageTemplate(path), placeholder, value, accentColor);
-    }
-
-    public String getCenteredIpInfoMessage(String separatorPath, String path, String... replacements) {
-        return centerPanelMessage(
-                formatIpInfoNotification(replacePlaceholders(getMessageTemplate(path), replacements)),
-                separatorPath);
-    }
-
-    public String getCenteredIpInfoAccentMessage(
-            String separatorPath, String path, String placeholder, String value, String accentColor) {
-        return centerPanelMessage(
-                formatIpInfoAccent(getMessageTemplate(path), placeholder, value, accentColor),
-                separatorPath);
     }
 
     public String getPrefixedIpInfoAccentMessage(String path, String placeholder, String value, String accentColor) {
@@ -284,11 +272,6 @@ public class ConfigManager {
         String key = "messages." + path;
         String localized = messageConfig != null ? messageConfig.getString(key) : null;
         return localized != null ? localized : config.getString(key, "");
-    }
-
-    private String centerPanelMessage(String formattedMessage, String separatorPath) {
-        return PanelTextFormatter.centerOnMarker(
-                formattedMessage, getMessageTemplate(separatorPath));
     }
 
     public String getRawMessage(String path, String... replacements) {

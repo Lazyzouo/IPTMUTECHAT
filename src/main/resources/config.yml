@@ -9,7 +9,7 @@
 # ============================================================================ #
 
 # 配置版本（请勿手动修改；用于安全迁移默认通知与菜单样式）
-config-version: 12
+config-version: 13
 
 # 界面语言：zh_CN（简体中文）或 en_US（English）
 language: zh_CN
@@ -118,8 +118,8 @@ messages:
   ip-info-player: "&8&l▸ &7&l玩家名称: &f&l{player}"
   ip-info-address: "&8&l▸ &7&l当前 IP: &f&l{ip}"
   ip-info-same-title: "&#B05C9E&l◆ &f&l同 IP 账号 &7&l({count})"
-  ip-info-same-entry: "&8&l  ▸ &f&l{player}"
-  ip-info-same-empty: "&8&l  ▸ &7&l未发现其他同 IP 账号"
+  ip-info-same-entry: "&8&l▸ &f&l{player}"
+  ip-info-same-empty: "&8&l▸ &7&l未发现其他同 IP 账号"
   ip-info-footer: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
 
   # ---- 私聊与管理操作 ----

@@ -1,4 +1,4 @@
-language-version: 12
+language-version: 13
 
 messages:
   reload-success: "&#22C55E&l[+] &a&lReloaded &8&l| &7&lConfiguration and data were reloaded."
@@ -67,8 +67,8 @@ messages:
   ip-info-player: "&8&l▸ &7&lPlayer: &f&l{player}"
   ip-info-address: "&8&l▸ &7&lCurrent IP: &f&l{ip}"
   ip-info-same-title: "&#B05C9E&l◆ &f&lSame-IP accounts &7&l({count})"
-  ip-info-same-entry: "&8&l  ▸ &f&l{player}"
-  ip-info-same-empty: "&8&l  ▸ &7&lNo other same-IP accounts found"
+  ip-info-same-entry: "&8&l▸ &f&l{player}"
+  ip-info-same-empty: "&8&l▸ &7&lNo other same-IP accounts found"
   ip-info-footer: "&#34495E&l------&#5F526D&l------&#8A5C83&l------ &r&#F2C94C&l✧ &r&#8A5C83&l------&#5F526D&l------&#34495E&l------"
   forcesay-usage: "&#FF5E62&l[!] &c&lInvalid usage &8&l| &f&l/forcesay <player> <message>"
   forcesay-success: "&#22C55E&l[+] &a&lForced chat &8&l| &7&lPlayer &#FACC15&l{player} &7&lsent: &f&l{message}"

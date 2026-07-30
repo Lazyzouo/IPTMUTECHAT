@@ -2,6 +2,26 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.4.5] - 2026-07-30
+
+### Changed
+
+- Removed pixel-based centering from every player-facing panel, including Help, mute records, the protection whitelist, ignore lists, and IP information; all panel text now starts at the left edge.
+- Removed the manual indentation from same-IP account entries and empty-state text.
+- Added a targeted message-style migration for existing installations while preserving server parameters and unrelated customized messages.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 移除 Help、禁言档案、保护白名单、屏蔽列表与 IP 信息等全部游戏内面板的像素居中处理，所有面板文本现统一从左侧开始显示。
+- 移除同 IP 账号条目与空状态文本中的手工缩进。
+- 为既有安装新增仅针对相关消息样式的迁移，并保留服务器参数及其他自定义消息。
+
 ## [1.4.4] - 2026-07-30
 
 ### Changed

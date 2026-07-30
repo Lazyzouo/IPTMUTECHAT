@@ -58,19 +58,19 @@ public class IpInfoCommand implements CommandExecutor, TabCompleter {
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .toList();
         sender.sendMessage(configManager.getIpInfoSeparatorMessage("ip-info-header"));
-        sender.sendMessage(configManager.getCenteredIpInfoMessage("ip-info-header", "ip-info-title"));
-        sender.sendMessage(configManager.getCenteredIpInfoAccentMessage(
-                "ip-info-header", "ip-info-player", "player", playerName, "#FACC15"));
-        sender.sendMessage(configManager.getCenteredIpInfoAccentMessage(
-                "ip-info-header", "ip-info-address", "ip", latestIp, "#EF4444"));
-        sender.sendMessage(configManager.getCenteredIpInfoMessage(
-                "ip-info-header", "ip-info-same-title", "count", String.valueOf(sameIpPlayers.size())));
+        sender.sendMessage(configManager.getIpInfoMessage("ip-info-title"));
+        sender.sendMessage(configManager.getIpInfoAccentMessage(
+                "ip-info-player", "player", playerName, "#FACC15"));
+        sender.sendMessage(configManager.getIpInfoAccentMessage(
+                "ip-info-address", "ip", latestIp, "#EF4444"));
+        sender.sendMessage(configManager.getIpInfoMessage(
+                "ip-info-same-title", "count", String.valueOf(sameIpPlayers.size())));
         if (sameIpPlayers.isEmpty()) {
-            sender.sendMessage(configManager.getCenteredIpInfoMessage("ip-info-header", "ip-info-same-empty"));
+            sender.sendMessage(configManager.getIpInfoMessage("ip-info-same-empty"));
         } else {
             for (String player : sameIpPlayers) {
-                sender.sendMessage(configManager.getCenteredIpInfoAccentMessage(
-                        "ip-info-header", "ip-info-same-entry", "player", player, "#22C55E"));
+                sender.sendMessage(configManager.getIpInfoAccentMessage(
+                        "ip-info-same-entry", "player", player, "#22C55E"));
             }
         }
         sender.sendMessage(configManager.getIpInfoSeparatorMessage("ip-info-footer"));
