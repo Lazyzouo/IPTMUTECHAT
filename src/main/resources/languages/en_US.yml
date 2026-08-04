@@ -1,4 +1,5 @@
-language-version: 13
+# Managed automatically: updates preserve customized messages and create a versioned backup.
+language-version: 14
 
 messages:
   reload-success: "&#22C55E&l[+] &a&lReloaded &8&l| &7&lConfiguration and data were reloaded."

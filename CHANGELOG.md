@@ -2,6 +2,33 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.5.0] - 2026-08-04
+
+### Added
+
+- Added template-based automatic migration for `config.yml` and `languages/en_US.yml` on startup and `/chatreload`; deleting configuration files after an update is no longer required.
+- Added versioned pre-upgrade backups and same-directory atomic replacement so a failed write cannot truncate the active configuration.
+
+### Changed
+
+- The newest official structure, ordering, comments, and missing defaults are now merged with every existing user parameter, customized message, and custom key.
+- Replaced destructive style-version migrations with value-preserving schema merging; only explicitly obsolete built-in keys and managed schema-version fields are changed.
+- Invalid existing YAML is left untouched and reported instead of being overwritten.
+
+### Compatibility
+
+- Supported: Paper/Folia 1.20.1-1.21.11.
+- Tested: Paper/Folia 1.21.11.
+- Plugin bytecode: Java 17.
+
+### 中文更新摘要
+
+- 新增 `config.yml` 与 `languages/en_US.yml` 的模板式自动迁移，服务器启动及执行 `/chatreload` 时会自动更新，升级后无需再删除配置文件。
+- 架构升级前自动创建带版本号的备份，并通过同目录原子替换写入，避免写入失败导致正在使用的配置被截断。
+- 最新官方结构、排序、注释与缺失默认项会和现有的全部用户参数、自定义消息及自定义键进行合并。
+- 取消会覆盖消息的旧式样式迁移；仅明确废弃的内置键与受管理的架构版本字段会被修改。
+- 无法解析的现有 YAML 会保持原样并输出错误，不会被覆盖。
+
 ## [1.4.6] - 2026-07-30
 
 ### Fixed

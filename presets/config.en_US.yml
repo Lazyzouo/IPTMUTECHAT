@@ -1,8 +1,10 @@
 # IPTMUTECHAT official English preset.
 # Rename this file to config.yml and place it in plugins/IPTMUTECHAT/ while the server is stopped.
-# Missing message keys are filled from official defaults; English messages load from languages/en_US.yml.
+# The plugin automatically refreshes structure/comments while preserving every user value and custom key.
+# Schema upgrades create a versioned .bak file; deleting config.yml is not required.
+# English messages load from languages/en_US.yml and are migrated with the same rules.
 
-config-version: 11
+config-version: 14
 language: en_US
 
 updater:

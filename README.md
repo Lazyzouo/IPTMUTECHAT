@@ -33,7 +33,8 @@ Sensitive IP data and protection-whitelist records stay on the server and are ne
 - Permanent and timed mutes with reasons and status inspection.
 - Private-message reply tracking and configurable chat cooldowns.
 - Simplified Chinese (`zh_CN`) and English (`en_US`) runtime modes.
-- Bold player-facing plugin text, pixel-centered panel content, yellow separator stars, and a centered Help identity line with distinct plugin/version/author colors, white commands, gray descriptions, and single-color section labels.
+- Automatic configuration-schema merging preserves user parameters, customized messages, and custom keys while refreshing official structure and comments; versioned backups protect every schema upgrade.
+- Bold, consistently left-aligned player-facing text with yellow separator stars, distinct plugin/version/author colors, white commands, gray descriptions, and single-color Help section labels.
 - Startup update checks with direct download, SHA-256 verification, JAR identity validation, and a manual fallback link.
 - Folia-aware plugin metadata and persistent YAML storage.
 - Automated GitHub builds and versioned Releases with English-default and Chinese-default JARs, official release notes, and GitHub SHA-256 digests.
@@ -80,7 +81,7 @@ Full permission details are in [Commands and permissions](docs/COMMANDS.md).
 
 ## Configuration Safety
 
-The tracked [`src/main/resources/config.yml`](src/main/resources/config.yml) contains only official defaults. Put personal server settings under an ignored local server directory such as `run/plugins/IPTMUTECHAT/config.yml`; runtime directories, logs, player IP records, mute data, ignore data, and `whitelist.yml` are excluded by `.gitignore` and must never be committed.
+The tracked [`src/main/resources/config.yml`](src/main/resources/config.yml) contains only official defaults. On startup and `/chatreload`, the plugin rebuilds local configuration files from the latest official template, overlays every existing user value and custom key, removes explicitly obsolete keys, and writes the result atomically. Schema upgrades first create `config.yml.v<old-schema>.bak` and an equivalent language-file backup, so server owners never need to delete `config.yml`. Put personal server settings under an ignored local server directory such as `run/plugins/IPTMUTECHAT/config.yml`; runtime directories, logs, player IP records, mute data, ignore data, and `whitelist.yml` are excluded by `.gitignore` and must never be committed.
 
 See [Configuration](docs/CONFIGURATION.md), [Updater](docs/UPDATER.md), [Privacy](docs/PRIVACY.md), and [Compatibility](docs/COMPATIBILITY.md).
 
@@ -118,7 +119,8 @@ IPTMUTECHAT 是面向 Paper 与 Folia 服务器的双语玩家审查与聊天管
 - 支持永久/定时禁言、原因记录及禁言状态查询。
 - 支持私聊快速回复与可配置聊天冷却。
 - 支持简体中文 `zh_CN` 与英文 `en_US` 运行模式。
-- 游戏内插件文本统一以粗体显示，面板内容按星标像素居中且分割线星标统一为黄色；Help 身份栏居中显示，插件名、版本、作者使用不同颜色，指令为白色、说明为灰色，栏目标题使用单一颜色。
+- 自动合并配置架构：更新官方结构与注释时保留用户参数、自定义消息及自定义键，并在每次架构升级前创建带版本号的备份。
+- 游戏内插件文本统一以粗体和左对齐显示，分割线星标为黄色；Help 中的插件名、版本、作者使用不同颜色，指令为白色、说明为灰色，栏目标题使用单一颜色。
 - 启动时检查更新，可直接下载并校验 SHA-256 与 JAR 身份；失败时提供手动下载地址。
 - 提供自动构建、自动 Release、中英文默认 JAR、官方更新日志及 GitHub SHA-256 摘要。
 
@@ -145,6 +147,6 @@ Release 资源文件名不可更改：每个 Release 的自定义资源必须恰
 
 ## 配置隔离
 
-仓库中的 [`src/main/resources/config.yml`](src/main/resources/config.yml) 只保存官方默认参数。个人服务端配置应放在已忽略的运行目录，例如 `run/plugins/IPTMUTECHAT/config.yml`。运行数据、日志、玩家 IP、禁言、屏蔽与 `whitelist.yml` 白名单数据均已排除，不应提交到 GitHub。
+仓库中的 [`src/main/resources/config.yml`](src/main/resources/config.yml) 只保存官方默认参数。插件会在启动和 `/chatreload` 时以最新官方模板重建本地配置结构，再回填全部用户参数、自定义消息与自定义键，移除明确废弃的键，并通过原子替换写入。架构升级前会先创建 `config.yml.v<旧架构>.bak` 及对应语言文件备份，因此服主无需删除 `config.yml`。个人服务端配置应放在已忽略的运行目录，例如 `run/plugins/IPTMUTECHAT/config.yml`。运行数据、日志、玩家 IP、禁言、屏蔽与 `whitelist.yml` 白名单数据均已排除，不应提交到 GitHub。
 
 完整说明请查看[配置](docs/CONFIGURATION.md)、[指令与权限](docs/COMMANDS.md)、[更新器](docs/UPDATER.md)、[隐私](docs/PRIVACY.md)与[兼容性](docs/COMPATIBILITY.md)。

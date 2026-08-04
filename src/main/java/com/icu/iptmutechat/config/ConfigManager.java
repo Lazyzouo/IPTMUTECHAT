@@ -2,14 +2,21 @@ package com.icu.iptmutechat.config;
 
 import com.icu.iptmutechat.IPTMUTECHAT;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
@@ -24,42 +31,12 @@ public class ConfigManager {
     public static final int DEFAULT_COOLDOWN = 2;
     public static final String PREFIX = "&#8A2387&l[&#E62028&lIPTMUTECHAT&#8A2387&l] &8&l» &7";
     public static final List<String> CHAT_COMMANDS = List.of("msg", "tell", "w", "whisper", "me", "say");
-    private static final int CONFIG_VERSION = 13;
-    private static final int LANGUAGE_VERSION = 13;
-    private static final List<String> NOTIFICATION_STYLE_KEYS = List.of(
-            "reload-success", "no-permission", "player-not-found", "unknown-command", "player-only",
-            "cooldown", "muted", "muted-no-reason", "mute-usage", "mute-duration-notice",
-            "mute-type-permanent-notice", "mute-ends-in-notice", "mute-target",
-            "mute-target-with-time", "mute-target-with-reason", "unmute-target", "not-muted",
-            "already-muted", "unmute-usage", "unmuted-player", "muteinfo-usage",
-            "whitelist-usage", "whitelist-player-not-found", "whitelist-added",
-            "whitelist-already-added", "whitelist-removed", "whitelist-not-found",
-            "whitelist-mute-denied", "ignore-added", "ignore-removed", "ignore-already",
-            "ignore-not", "ignore-self", "ignore-exempt", "ignore-usage", "ignore-list-empty",
-            "ip-info-usage", "ip-info-not-found", "ip-info-hidden", "ip-hide-player-only",
-            "ip-hide-enabled", "ip-hide-disabled", "forcesay-usage", "forcesay-success",
-            "reply-usage", "reply-none", "reply-offline", "reply-muted"
-    );
-    private static final List<String> HELP_STYLE_KEYS = List.of(
-            "help-header", "help-title", "help-divider", "help-command", "help-player-section",
-            "help-ignore", "help-ignore-list", "help-reply", "help-admin-section", "help-ipinfo",
-            "help-iphide", "help-mute", "help-unmute", "help-muteinfo", "help-forcesay",
-            "help-whitelist", "help-reload", "help-footer"
-    );
-    private static final List<String> LEFT_ALIGNMENT_STYLE_KEYS = List.of(
-            "ip-info-same-entry", "ip-info-same-empty"
-    );
-    private static final List<String> MENU_STYLE_KEYS = List.of(
-            "mute-info-header", "mute-info-title", "mute-info-player", "mute-info-reason",
-            "mute-info-time-left", "mute-info-permanent", "mute-info-temporary", "mute-info-footer",
-            "ignore-list-header", "ignore-list-title", "ignore-list-empty", "ignore-list-format", "ignore-list-footer",
-            "ip-info-usage", "ip-info-not-found", "ip-info-hidden", "ip-hide-player-only", "ip-hide-enabled",
-            "ip-hide-disabled", "ip-info-header", "ip-info-title", "ip-info-player",
-            "ip-info-address", "ip-info-same-title", "ip-info-same-entry", "ip-info-same-empty", "ip-info-footer",
-            "help-header", "help-title", "help-author", "help-divider", "help-command", "help-ignore", "help-ignore-list",
-            "help-reply", "help-iphide", "help-whitelist", "help-reload", "help-footer",
-            "whitelist-list-header", "whitelist-list-title", "whitelist-list-empty",
-            "whitelist-list-entry", "whitelist-list-footer"
+    private static final int CONFIG_VERSION = 14;
+    private static final int LANGUAGE_VERSION = 14;
+    private static final List<String> REMOVED_CONFIGURATION_PATHS = List.of(
+            "messages.ip-info-similar-title",
+            "messages.ip-info-similar-entry",
+            "messages.ip-info-similar-empty"
     );
 
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
@@ -69,9 +46,6 @@ public class ConfigManager {
     private static final int[] NOTIFICATION_GRADIENT_END = {0xF2, 0xC9, 0x4C};
     private static final int[] IP_INFO_GRADIENT_START = {0x22, 0xD3, 0xEE};
     private static final int[] IP_INFO_GRADIENT_END = {0x3B, 0x82, 0xF6};
-    private static final List<String> REMOVED_MESSAGE_KEYS = List.of(
-            "ip-info-similar-title", "ip-info-similar-entry", "ip-info-similar-empty"
-    );
 
     public ConfigManager(IPTMUTECHAT plugin) {
         this.plugin = plugin;
@@ -84,15 +58,15 @@ public class ConfigManager {
 
     private void loadConfig() {
         File configFile = new File(plugin.getDataFolder(), "config.yml");
-        if (!configFile.isFile()) {
-            plugin.saveResource("config.yml", false);
+        try {
+            this.config = mergeBundledConfiguration(
+                    configFile, "config.yml", "config-version", CONFIG_VERSION);
+        } catch (IOException | InvalidConfigurationException e) {
+            plugin.getConsoleLogger().warning(
+                    "Unable to update config.yml safely; the existing file was not replaced: " + e.getMessage(),
+                    NamedTextColor.RED);
+            throw new IllegalStateException("Unable to load IPTMUTECHAT configuration", e);
         }
-        plugin.saveDefaultConfig();
-        plugin.reloadConfig();
-        this.config = plugin.getConfig();
-        config.options().copyDefaults(true);
-        migrateMenuStyle();
-        plugin.saveConfig();
         loadLanguageMessages();
     }
 
@@ -111,76 +85,154 @@ public class ConfigManager {
 
         language = "en_US";
         File languageFile = new File(plugin.getDataFolder(), "languages/en_US.yml");
-        if (!languageFile.isFile()) {
-            plugin.saveResource("languages/en_US.yml", false);
-        }
-        YamlConfiguration localizedMessages = YamlConfiguration.loadConfiguration(languageFile);
-        int currentLanguageVersion = localizedMessages.getInt("language-version", 0);
-        try (InputStreamReader reader = new InputStreamReader(
-                plugin.getResource("languages/en_US.yml"), StandardCharsets.UTF_8)) {
-            YamlConfiguration defaults = YamlConfiguration.loadConfiguration(reader);
-            localizedMessages.setDefaults(defaults);
-            localizedMessages.options().copyDefaults(true);
-            if (currentLanguageVersion < 11) {
-                for (String key : HELP_STYLE_KEYS) {
-                    localizedMessages.set("messages." + key, defaults.getString("messages." + key));
-                }
-            }
-            if (currentLanguageVersion < 12) {
-                for (String key : NOTIFICATION_STYLE_KEYS) {
-                    localizedMessages.set("messages." + key, defaults.getString("messages." + key));
-                }
-            }
-            if (currentLanguageVersion < 13) {
-                for (String key : LEFT_ALIGNMENT_STYLE_KEYS) {
-                    localizedMessages.set("messages." + key, defaults.getString("messages." + key));
-                }
-            }
-            if (currentLanguageVersion < LANGUAGE_VERSION) {
-                localizedMessages.set("language-version", LANGUAGE_VERSION);
-            }
-            localizedMessages.save(languageFile);
-        } catch (IOException | NullPointerException e) {
+        try {
+            messageConfig = mergeBundledConfiguration(
+                    languageFile, "languages/en_US.yml", "language-version", LANGUAGE_VERSION);
+        } catch (IOException | InvalidConfigurationException e) {
             plugin.getConsoleLogger().warning(
-                    "Unable to update en_US language defaults: " + e.getMessage(), NamedTextColor.RED);
+                    "Unable to update languages/en_US.yml safely; the existing file was not replaced. "
+                            + "Bundled English messages will be used: " + e.getMessage(),
+                    NamedTextColor.RED);
+            try {
+                messageConfig = loadBundledConfiguration("languages/en_US.yml");
+            } catch (IOException | InvalidConfigurationException fallbackError) {
+                language = "zh_CN";
+                messageConfig = config;
+            }
         }
-        messageConfig = localizedMessages;
     }
 
-    /** Applies the latest notification and menu styles to configurations from older versions. */
-    private void migrateMenuStyle() {
-        int currentVersion = config.getInt("config-version", 0);
-        if (currentVersion >= CONFIG_VERSION) {
-            return;
+    private YamlConfiguration mergeBundledConfiguration(
+            File targetFile, String resourcePath, String versionPath, int targetVersion)
+            throws IOException, InvalidConfigurationException {
+        YamlConfiguration bundled = loadBundledConfiguration(resourcePath);
+        YamlConfiguration existing = new YamlConfiguration();
+        existing.options().parseComments(true);
+
+        boolean fileExists = targetFile.isFile();
+        int previousVersion = 0;
+        String existingText = null;
+        if (fileExists) {
+            existing.load(targetFile);
+            previousVersion = existing.getInt(versionPath, 0);
+            existingText = Files.readString(targetFile.toPath(), StandardCharsets.UTF_8);
+            mergeUserValues(existing, bundled, versionPath);
         }
 
-        Configuration defaults = config.getDefaults();
-        if (currentVersion < 8) {
-            if (defaults != null) {
-                for (String key : MENU_STYLE_KEYS) {
-                    config.set("messages." + key, defaults.getString("messages." + key));
+        bundled.set(versionPath, targetVersion);
+        for (String removedPath : REMOVED_CONFIGURATION_PATHS) {
+            bundled.set(removedPath, null);
+        }
+
+        String mergedText = bundled.saveToString();
+        if (!fileExists || !mergedText.equals(existingText)) {
+            Path backupPath = null;
+            if (fileExists && previousVersion < targetVersion) {
+                backupPath = createUpgradeBackup(targetFile.toPath(), previousVersion);
+            }
+            writeAtomically(targetFile.toPath(), mergedText);
+            if (backupPath != null) {
+                plugin.getConsoleLogger().info(
+                        targetFile.getName() + " updated to schema " + targetVersion
+                                + " with user values preserved. Backup: " + backupPath.getFileName(),
+                        NamedTextColor.GREEN);
+            }
+        }
+        return bundled;
+    }
+
+    private YamlConfiguration loadBundledConfiguration(String resourcePath)
+            throws IOException, InvalidConfigurationException {
+        InputStream resource = plugin.getResource(resourcePath);
+        if (resource == null) {
+            throw new IOException("Bundled resource is missing: " + resourcePath);
+        }
+
+        YamlConfiguration bundled = new YamlConfiguration();
+        bundled.options().parseComments(true);
+        try (InputStreamReader reader = new InputStreamReader(resource, StandardCharsets.UTF_8)) {
+            bundled.load(reader);
+        }
+        return bundled;
+    }
+
+    private static void mergeUserValues(
+            YamlConfiguration existing, YamlConfiguration bundled, String versionPath) {
+        Set<String> officialPaths = new HashSet<>(bundled.getKeys(true));
+        for (String path : existing.getKeys(true)) {
+            if (path.equals(versionPath) || isRemovedPath(path)) {
+                continue;
+            }
+
+            boolean existingSection = existing.isConfigurationSection(path);
+            boolean bundledSection = bundled.isConfigurationSection(path);
+            boolean bundledPath = officialPaths.contains(path);
+            if (existingSection) {
+                if (!bundledPath) {
+                    bundled.createSection(path);
+                    copyCustomComments(existing, bundled, path);
                 }
+                continue;
             }
-            for (String key : REMOVED_MESSAGE_KEYS) {
-                config.set("messages." + key, null);
+            if (bundledSection) {
+                continue;
             }
-        }
-        if (currentVersion < 11 && defaults != null) {
-            for (String key : HELP_STYLE_KEYS) {
-                config.set("messages." + key, defaults.getString("messages." + key));
-            }
-        }
-        if (currentVersion < 12 && defaults != null) {
-            for (String key : NOTIFICATION_STYLE_KEYS) {
-                config.set("messages." + key, defaults.getString("messages." + key));
+
+            bundled.set(path, existing.get(path));
+            if (!bundledPath) {
+                copyCustomComments(existing, bundled, path);
             }
         }
-        if (currentVersion < 13 && defaults != null) {
-            for (String key : LEFT_ALIGNMENT_STYLE_KEYS) {
-                config.set("messages." + key, defaults.getString("messages." + key));
+    }
+
+    private static boolean isRemovedPath(String path) {
+        for (String removedPath : REMOVED_CONFIGURATION_PATHS) {
+            if (path.equals(removedPath) || path.startsWith(removedPath + ".")) {
+                return true;
             }
         }
-        config.set("config-version", CONFIG_VERSION);
+        return false;
+    }
+
+    private static void copyCustomComments(
+            YamlConfiguration source, YamlConfiguration target, String path) {
+        List<String> comments = source.getComments(path);
+        if (!comments.isEmpty()) {
+            target.setComments(path, comments);
+        }
+        List<String> inlineComments = source.getInlineComments(path);
+        if (!inlineComments.isEmpty()) {
+            target.setInlineComments(path, inlineComments);
+        }
+    }
+
+    private static Path createUpgradeBackup(Path targetPath, int previousVersion) throws IOException {
+        String versionLabel = previousVersion > 0 ? "v" + previousVersion : "pre-versioned";
+        Path backupPath = targetPath.resolveSibling(
+                targetPath.getFileName() + "." + versionLabel + ".bak");
+        Files.copy(targetPath, backupPath,
+                StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+        return backupPath;
+    }
+
+    private static void writeAtomically(Path targetPath, String contents) throws IOException {
+        Path parent = targetPath.toAbsolutePath().getParent();
+        if (parent == null) {
+            throw new IOException("Configuration path has no parent directory: " + targetPath);
+        }
+        Files.createDirectories(parent);
+        Path temporaryPath = Files.createTempFile(parent, targetPath.getFileName() + ".", ".tmp");
+        try {
+            Files.writeString(temporaryPath, contents, StandardCharsets.UTF_8);
+            try {
+                Files.move(temporaryPath, targetPath,
+                        StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporaryPath);
+        }
     }
 
     public int getCooldownSeconds() { return config.getInt("chat.cooldown-seconds", DEFAULT_COOLDOWN); }
